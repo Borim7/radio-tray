@@ -20,15 +20,15 @@
 from os.path import exists, join
 
 try:
-    import pygtk
-    pygtk.require("2.0")
+    import gi
+    gi.require_version("Gtk", "3.0")
     import dbus
     import dbus.service
 except:
       pass
 
 try:
-    import gtk
+    from gi.repository import Gtk
 except ImportError, e:
     print str(e)
     raise SystemExit
@@ -36,7 +36,7 @@ except ImportError, e:
 
 def load_ui_file(name):
     import common
-    ui = gtk.Builder()
+    ui = Gtk.Builder()
     ui.add_from_file(join(common.DEFAULT_CFG_PATH, name))
     return ui
 

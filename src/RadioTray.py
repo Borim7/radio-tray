@@ -73,6 +73,7 @@ class RadioTray(object):
 
         # tooltip manager
         tooltipManager = TooltipManager()
+        self.logger.debug("Tooltip manager initialized.")
 
         # chooser
         if(url == '--config'):
@@ -82,7 +83,7 @@ class RadioTray(object):
             url = None
         # load gui
         self.systray = SysTray(self.mediator, self.provider, self.cfg_provider, self.default_cfg_provider, eventManager, tooltipManager)
-        
+        self.logger.debug("GUI initialized")        
         
         
         # notification manager

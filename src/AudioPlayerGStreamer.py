@@ -18,11 +18,20 @@
 #
 ##########################################################################
 import sys, os
-import pygtk, gtk
-
-from gi.repository import Gobject, Gst
-GObject.threads_init()
-Gst.init(None)
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    gi.require_version('Gst', '1.0')
+except:
+    pass
+try:
+    from gi.repository import Gtk
+    from gi.repository import GObject
+    GObject.threads_init()
+    from gi.repository import Gst
+    Gst.init(None)
+except Exception as e:
+    print e
 
 from StreamDecoder import StreamDecoder
 from lib.common import USER_AGENT
@@ -42,10 +51,12 @@ class AudioPlayerGStreamer:
         self.log = logging.getLogger('radiotray')
 
         # init player
-        self.souphttpsrc = Gst.element_factory_make("souphttpsrc", "source")
+        self.log.debug("Initializing gstreamer...")
+        self.souphttpsrc = Gst.ElementFactory.make("souphttpsrc", "source")
         self.souphttpsrc.set_property("user-agent", USER_AGENT)
 		
-        self.player = Gst.ElementFactory.make("playbin2", "player")
+        self.log.debug("Loading playbin...");
+        self.player = Gst.ElementFactory.make("playbin", "player")
         fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
         self.player.set_property("video-sink", fakesink)
 
@@ -61,6 +72,8 @@ class AudioPlayerGStreamer:
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
+
+        self.log.debug("GStreamer initialized.")
 
     def start(self, uri):
 
@@ -122,7 +135,7 @@ class AudioPlayerGStreamer:
     def on_message(self, bus, message):
         t = message.type
 
-        stru = message.structure
+        stru = message.get_structure()
         if(stru != None):
             name = stru.get_name()
             if(name == 'redirect'):
@@ -137,7 +150,7 @@ class AudioPlayerGStreamer:
             self.player.set_state(Gst.State.NULL)
             self.playNextStream()
         elif t == Gst.MessageType.BUFFERING:
-            percent = message.structure['buffer-percent']
+            percent = message.parse_buffering()
             if percent < 100:
                 self.log.debug("Buffering %s" % percent)
                 self.player.set_state(Gst.State.PAUSED)
@@ -178,17 +191,30 @@ class AudioPlayerGStreamer:
 
            taglist = message.parse_tag()
 
-           #if there is no song information, there's no point in triggering song change event
-           if('artist' in taglist.keys() or 'title' in taglist.keys()):
-               station = self.mediator.getContext().station
+           #for (tag, value) in taglist.items():
+           #    print "TT: " + tag + " - " + value
+
+           (present, value) = taglist.get_string('title')
+
+           if present:
                metadata = {}
-
-               for key in taglist.keys():      
-                   metadata[key] = taglist[key]
-
+               station = self.mediator.getContext().station
+               metadata['title'] = value
                metadata['station'] = station
-           
+
                self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
+
+           #if there is no song information, there's no point in triggering song change event
+           #if('artist' in taglist.keys() or 'title' in taglist.keys()):
+           #    station = self.mediator.getContext().station
+           #    metadata = {}
+
+           #    for key in taglist.keys():      
+           #        metadata[key] = taglist[key]
+
+           #    metadata['station'] = station
+           
+           #    self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
 
         return True
 

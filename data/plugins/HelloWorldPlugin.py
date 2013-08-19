@@ -20,7 +20,7 @@
 from events.EventSubscriber import EventSubscriber
 from events.EventManager import EventManager
 from Plugin import Plugin
-import gtk
+from gi.repository import Gtk
 import time
 
 # Basic example of a plugin

@@ -20,9 +20,10 @@
 import sys
 from lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF, APP_INDICATOR_ICON_CONNECT, IMAGE_PATH
 try:
-    import gtk
-    import gtk.glade
-except:
+    from gi.repository import Gtk
+    #import Gtk.glade
+except Exception as e:
+    print e
     sys.exit(1)
 import textwrap
 import logging
@@ -42,9 +43,9 @@ class AppIndicatorGui:
     def buildMenu(self):
 
         try:
-            import appindicator
-            self.app_indicator = appindicator.Indicator(APPNAME, APP_INDICATOR_ICON_OFF , appindicator.CATEGORY_APPLICATION_STATUS)
-            self.app_indicator.set_status(appindicator.STATUS_ACTIVE)
+            from gi.repository import AppIndicator3
+            self.app_indicator = AppIndicator3.Indicator.new(APPNAME, APP_INDICATOR_ICON_OFF , AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+            self.app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         except Exception as e:
             self.log.debug(e)
             self.log.warn("Failed to create an Application Indicator!")
@@ -56,7 +57,7 @@ class AppIndicatorGui:
         self.metadata_menu_item = None
         self.perferences_submenu = None
         self.preferences_menu = None
-        self.radioMenu = gtk.Menu()
+        self.radioMenu = Gtk.Menu()
         self.build_app_indicator_menu(self.radioMenu)
         self.app_indicator.set_menu(self.radioMenu)
         self.handler.updateTooltip()
@@ -73,36 +74,37 @@ class AppIndicatorGui:
         # config menu
         if self.turnOnOff == None:
             if not self.mediator.context.station:
-                self.turnOnOff = gtk.MenuItem(_("Turned Off"), False)
+                self.turnOnOff = Gtk.MenuItem(_("Turned Off"))
                 self.turnOnOff.set_sensitive(False)
             else:
-                self.turnOnOff = gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)
+                self.turnOnOff = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station)
                 self.turnOnOff.set_sensitive(True)
 
             self.turnOnOff.connect('activate', self.handler.on_turn_on_off)
 
         # stream metadata info
         if self.metadata_menu_item == None:
-            self.metadata_menu_item = gtk.MenuItem("Idle", False)
+            self.metadata_menu_item = Gtk.MenuItem("Idle")
             self.metadata_menu_item.set_sensitive(False)
 
         # if self.sleep_timer_menu_item == None:
-        #     self.sleep_timer_menu_item = gtk.CheckMenuItem(_("Sleep Timer"))
+        #     self.sleep_timer_menu_item = Gtk.CheckMenuItem(_("Sleep Timer"))
 
         if self.preferences_menu == None:
-            self.preferences_menu = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
+            self.preferences_menu = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_PREFERENCES, None)
+            self.preferences_menu.set_always_show_image(True)
 
-        menu_config_radios = gtk.MenuItem(_("Configure Radios..."))
-        menu_reload_bookmarks = gtk.MenuItem(_("Reload Bookmarks"))
-        menu_config_plugin = gtk.MenuItem(_("Configure Plugins..."))
+        menu_config_radios = Gtk.MenuItem(_("Configure Radios..."))
+        menu_reload_bookmarks = Gtk.MenuItem(_("Reload Bookmarks"))
+        menu_config_plugin = Gtk.MenuItem(_("Configure Plugins..."))
         #Check bookmarks file status
         menu_config_radios.set_sensitive(self.provider.isBookmarkWritable())
 
         # build
         menu.append(self.turnOnOff)
-        menu.append(gtk.MenuItem())
+        menu.append(Gtk.MenuItem())
         menu.append(self.metadata_menu_item)
-        menu.append(gtk.MenuItem())
+        menu.append(Gtk.MenuItem())
 
         self.provider.walk_bookmarks(self.group_callback, self.bookmark_callback, menu)
 
@@ -111,30 +113,30 @@ class AppIndicatorGui:
         menu_config_plugin.connect('activate', self.handler.on_plugin_preferences)
 
 
-        menu.append(gtk.MenuItem())
+        menu.append(Gtk.MenuItem())
 
         # build preferences
         menu.append(self.preferences_menu)
 
         if self.perferences_submenu == None:
-            self.perferences_submenu = gtk.Menu()
+            self.perferences_submenu = Gtk.Menu()
             self.preferences_menu.set_submenu(self.perferences_submenu)
-            #self.perferences_submenu.append(gtk.MenuItem())
+            #self.perferences_submenu.append(Gtk.MenuItem())
             self.perferences_submenu.append(menu_config_radios)
             self.perferences_submenu.append(menu_reload_bookmarks)
 
         # plugins submenu
         if self.menu_plugins_item == None:
-            self.menu_plugins_item = gtk.MenuItem("Plugins", False)
-            self.menu_plugins = gtk.Menu()
+            self.menu_plugins_item = Gtk.MenuItem("Plugins")
+            self.menu_plugins = Gtk.Menu()
             self.menu_plugins.append(menu_config_plugin)
-            self.menu_plugins.append(gtk.MenuItem())	#add separator
+            self.menu_plugins.append(Gtk.MenuItem())	#add separator
             self.menu_plugins_item.set_submenu(self.menu_plugins)
 
         menu.append(self.menu_plugins_item)
 
-        menu_about = gtk.ImageMenuItem(gtk.STOCK_ABOUT)
-        menu_quit = gtk.ImageMenuItem(gtk.STOCK_QUIT)
+        menu_about = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_ABOUT, None)
+        menu_quit = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_QUIT, None)
         menu_quit.connect('activate', self.handler.on_quit)
         menu_about.connect('activate', self.handler.on_about)
         menu.append(menu_about)
@@ -162,9 +164,9 @@ class AppIndicatorGui:
         new_user_data = None
 
         if group_name != 'root':
-            group = gtk.MenuItem(group_name, False)
+            group = Gtk.MenuItem(group_name)
             user_data.append(group)
-            new_user_data = gtk.Menu()
+            new_user_data = Gtk.Menu()
             group.set_submenu(new_user_data)
         else:
             new_user_data = self.radioMenu
@@ -175,11 +177,11 @@ class AppIndicatorGui:
     def bookmark_callback(self, radio_name, user_data):
 
         if radio_name.startswith("[separator-"):
-            separator = gtk.MenuItem()
+            separator = Gtk.MenuItem()
             user_data.append(separator)
             separator.show()
         else:
-            radio = gtk.MenuItem(radio_name, False)
+            radio = Gtk.MenuItem(radio_name)
             radio.show()
             radio.connect('activate', self.handler.on_start, radio_name)
             user_data.append(radio)

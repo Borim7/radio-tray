@@ -20,7 +20,7 @@
 from events.EventSubscriber import EventSubscriber
 from events.EventManager import EventManager
 from Plugin import Plugin
-import gtk
+from gi.repository import Gtk
 from lib import utils
 from lib.common import SYSTEM_PLUGIN_PATH, USER_PLUGIN_PATH
 import os

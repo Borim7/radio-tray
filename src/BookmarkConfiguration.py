@@ -20,15 +20,16 @@
 import sys
 
 try:
-    import pygtk
-    pygtk.require("2.0")
+    import gi
+    gi.require_version("Gtk", "3.0")
 except:
     pass
 try:
-    import gtk
-    import gtk.glade
+    from gi.repository import Gtk, Gdk
+    #import Gtk.glade
     import os
-except:
+except Exception as e:
+    print e
     sys.exit(1)
 
 from XmlDataProvider import XmlDataProvider
@@ -38,8 +39,8 @@ from lib import i18n
 import uuid
 import logging
 
-drop_yes = ("drop_yes", gtk.TARGET_SAME_WIDGET, 0)
-drop_no = ("drop_no", gtk.TARGET_SAME_WIDGET, 0)
+drop_yes = ("drop_yes", Gtk.TargetFlags.SAME_WIDGET, 0)
+drop_no = ("drop_no", Gtk.TargetFlags.SAME_WIDGET, 0)
 
 
 class BookmarkConfiguration(object):
@@ -91,23 +92,23 @@ class BookmarkConfiguration(object):
         self.load_data()
         
         # config tree ui
-        cell = gtk.CellRendererText()
-        tvcolumn = gtk.TreeViewColumn(_('Radio Name'), cell)
+        cell = Gtk.CellRendererText()
+        tvcolumn = Gtk.TreeViewColumn(_('Radio Name'), cell)
         self.list.append_column(tvcolumn)
         tvcolumn.add_attribute(cell, 'text', 0)
         
         # config combo ui
-        cell2 = gtk.CellRendererText()
+        cell2 = Gtk.CellRendererText()
         self.parentGroup.pack_start(cell2, True)
         self.parentGroup.add_attribute(cell2, 'text', 0)
              
         # config add radio group combo ui
-        cell4 = gtk.CellRendererText()
+        cell4 = Gtk.CellRendererText()
         self.radioGroup.pack_start(cell4, True)
         self.radioGroup.add_attribute(cell4, 'text', 0)
         
         # separator new group combo ui
-        cell3 = gtk.CellRendererText()
+        cell3 = Gtk.CellRendererText()
         self.sepGroup.pack_start(cell3, True)
         self.sepGroup.add_attribute(cell3, 'text', 0)
 
@@ -128,9 +129,9 @@ class BookmarkConfiguration(object):
 
         # enable drag and drop support
         self.list.enable_model_drag_source(
-            gtk.gdk.BUTTON1_MASK, [drop_yes], gtk.gdk.ACTION_MOVE)
+            Gdk.ModifierType.BUTTON1_MASK, [drop_yes], Gdk.DragAction.MOVE)
         self.list.enable_model_drag_dest(
-            [drop_yes], gtk.gdk.ACTION_MOVE)
+            [drop_yes], Gdk.DragAction.MOVE)
         self.list.connect("drag-data-received", self.onDragDataReceived)
         self.list.connect("drag-motion", self.onDragMotion)
 
@@ -140,7 +141,7 @@ class BookmarkConfiguration(object):
     def load_data(self):
     
         # the meaning of the three columns is: description, id, type
-        treestore = gtk.TreeStore(str, str, str)
+        treestore = Gtk.TreeStore(str, str, str)
         root = self.dataProvider.getRootGroup()
         self.add_group_data(root, None, treestore)
         self.list.set_model(treestore)
@@ -151,15 +152,15 @@ class BookmarkConfiguration(object):
     def checkSanity(self, model, source, target):
         source_path = model.get_path(source)
         target_path = model.get_path(target)
-        if target_path[0:len(source_path)] == source_path:
+        if target_path[0:len(source_path)] == list(source_path):
             return False
         else:
             return True
     
     #drag and drop support
     def checkParentability(self, model, target, drop_position):
-        if (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE
-                or drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER) \
+        if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE
+                or drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER) \
                 and (model.get_value(target, 2) == self.RADIO_TYPE or model.get_value(target, 2) == self.SEPARATOR_TYPE):
             return False
         else:
@@ -175,19 +176,19 @@ class BookmarkConfiguration(object):
     def copyRow(self, treeview, model, source, target, drop_position):
     
         source_row = model[source]
-        if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE:
+        if drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE:
             new = model.prepend(target, source_row)
-        elif drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
+        elif drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER:
             new = model.append(target, source_row)
-        elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:
+        elif drop_position == Gtk.TreeViewDropPosition.BEFORE:
             new = model.insert_before(None, target, source_row)
-        elif drop_position == gtk.TREE_VIEW_DROP_AFTER:
+        elif drop_position == Gtk.TreeViewDropPosition.AFTER:
             new = model.insert_after(None, target, source_row)
             
         for n in range(model.iter_n_children(source)):
             child = model.iter_nth_child(source, n)
             self.copyRow(treeview, model, child, new,
-                                 gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)
+                                 Gtk.TreeViewDropPosition.INTO_OR_BEFORE)
                                  
         source_is_expanded = treeview.row_expanded(model.get_path(source))
         if source_is_expanded:
@@ -197,6 +198,7 @@ class BookmarkConfiguration(object):
     #drag and drop support   
     def onDragDataReceived(self, treeview, drag_context, x, y, selection_data, info, eventtime):
 
+        print "ca ta"
         #check if there's a valid drop location
         if(treeview.get_dest_row_at_pos(x, y) == None):
             self.log.debug("Dropped into nothing")
@@ -211,9 +213,10 @@ class BookmarkConfiguration(object):
         is_sane = self.checkSanity(model, source, target)
         is_parentable = self.checkParentability(model, target, drop_position)
         if is_sane and is_parentable:
+            print "hmmm"
             self.copyRow(treeview, model, source, target, drop_position)
-            if (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE
-                or drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER):
+            if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE
+                or drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
                 treeview.expand_row(target_path, False)
             drag_context.finish(True, True, eventtime)
 
@@ -233,9 +236,9 @@ class BookmarkConfiguration(object):
         is_sane = self.checkSanity(model, source, target)
         is_parentable = self.checkParentability(model, target, drop_position)
         if is_sane and is_parentable:
-            treeview.enable_model_drag_dest([drop_yes], gtk.gdk.ACTION_MOVE)
+            treeview.enable_model_drag_dest([drop_yes], Gdk.DragAction.MOVE)
         else:
-            treeview.enable_model_drag_dest([drop_no], gtk.gdk.ACTION_MOVE)
+            treeview.enable_model_drag_dest([drop_no], Gdk.DragAction.MOVE)
 
 
 
@@ -277,7 +280,7 @@ class BookmarkConfiguration(object):
         self.radioGroupLabel.show()
         
         # populate groups
-        liststore = gtk.ListStore(str)
+        liststore = Gtk.ListStore(str)
 
         for group in self.dataProvider.listGroupNames():
             liststore.append([group])
@@ -326,7 +329,7 @@ class BookmarkConfiguration(object):
             selectedName = model.get_value(iter,1)
             selectedType = model.get_value(iter, 2)
             
-            liststore = gtk.ListStore(str)
+            liststore = Gtk.ListStore(str)
 
             for group in self.dataProvider.listGroupNames():
                 liststore.append([group])
@@ -455,11 +458,11 @@ class BookmarkConfiguration(object):
             # if separator then just remove it
             if not separatorFlag.startswith("[separator-"):
 
-                confirmation = gtk.MessageDialog(
+                confirmation = Gtk.MessageDialog(
                     self.window,
-                    gtk.DIALOG_MODAL,
-                    gtk.MESSAGE_QUESTION,
-                    gtk.BUTTONS_YES_NO,
+                    Gtk.DialogFlags.MODAL,
+                    Gtk.MessageType.QUESTION,
+                    Gtk.ButtonsType.YES_NO,
                     _("Are you sure you want to delete \"%s\"?") % selectedRadioName
                 )
 
@@ -489,7 +492,7 @@ class BookmarkConfiguration(object):
     # close the window and quit
     def on_delete_event(self, widget, event, data=None):
         if self.standalone:
-            gtk.main_quit()
+            Gtk.main_quit()
         return False
 
     def on_nameEntry_activated(self, widget):
@@ -508,7 +511,7 @@ class BookmarkConfiguration(object):
         self.groupNameEntry.grab_focus()
         
         # populate parent groups
-        liststore = gtk.ListStore(str)
+        liststore = Gtk.ListStore(str)
 
         for group in self.dataProvider.listGroupNames():
             liststore.append([group])

@@ -20,15 +20,16 @@
 import sys
 
 try:
-    import pygtk
-    pygtk.require("2.0")
+    import gi
+    gi.require_version("Gtk", "3.0")
 except:
     pass
 try:
-    import gtk
-    import gtk.glade
+    from gi.repository import Gtk
+    #import Gtk.glade
     import os
-except:
+except Exception as e:
+    print e
     sys.exit(1)
 
 from lib.common import APP_ICON_ON

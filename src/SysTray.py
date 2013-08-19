@@ -20,16 +20,19 @@
 import sys,os
 import time
 try:
-    import pygtk
-    pygtk.require("2.1")
-    import gtk
-except:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+except Exception as e:
+    print e
     pass
-try:
-    import gtk
-    import gtk.glade
-except:
-    sys.exit(1)
+#try:
+    #from gi.repository import Gtk
+    #import Gtk.glade
+#except Exception as e:
+#    print e
+#    sys.exit(1)
 
 from AudioPlayerGStreamer import AudioPlayerGStreamer
 from XmlDataProvider import XmlDataProvider
@@ -94,7 +97,7 @@ class SysTray(object):
 
         # execute gui chooser
         try:
-            import appindicator
+            from gi.repository import AppIndicator3
             self.gui_engine = self.cfg_provider.getConfigValue("gui_engine")
             if(self.gui_engine == None):
                 self.gui_engine = default_cfg_provider.getConfigValue("gui_engine")
@@ -109,7 +112,6 @@ class SysTray(object):
         except Exception as e:
             self.log.debug('No appindicator support found. Choosing notification area...')
             self.gui_engine = "systray"
-
 
 
 
@@ -136,10 +138,10 @@ class SysTray(object):
 ###### Action Events #######
 
     def scroll(self,widget, event):
-        if event.direction == gtk.gdk.SCROLL_UP:
+        if event.direction == Gdk.ScrollDirection.UP:
             self.mediator.volume_up()
             
-        if event.direction == gtk.gdk.SCROLL_DOWN:
+        if event.direction == Gdk.ScrollDirection.DOWN:
             self.mediator.volume_down()
     def volume_up(self, menu_item):
         self.mediator.volume_up()
@@ -153,7 +155,7 @@ class SysTray(object):
 
     def on_quit(self, data):
         self.log.info('Exiting...')
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def on_about(self, data):
         about_dialog(parent=None)
@@ -181,8 +183,8 @@ class SysTray(object):
     
         
     def run(self):
-        gtk.gdk.threads_init()
-        gtk.main()
+        Gdk.threads_init()
+        Gtk.main()
 
 
     

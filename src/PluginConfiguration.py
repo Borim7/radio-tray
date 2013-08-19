@@ -20,20 +20,20 @@
 import sys
 
 try:
-    import pygtk
-    pygtk.require("2.0")
+    import gi
+    gi.require_version("Gtk", "3.0")
 except:
     pass
 try:
-    import gtk
-    import gtk.glade
-    from gi.repository import Gobject
+    from gi.repository import Gtk
+    #import Gtk.glade
+    from gi.repository import GObject
     GObject.threads_init()
     import os
     from lib import utils
     from lib.common import APP_ICON_ON
-except:
-    sys.exit(1)
+except Exception as e:
+    print e
 import logging
 
 class PluginConfiguration(object):
@@ -59,17 +59,17 @@ class PluginConfiguration(object):
 
 
         # config plugins view
-        cell1 = gtk.CellRendererToggle()
+        cell1 = Gtk.CellRendererToggle()
         cell1.set_property('activatable', True)
         cell1.set_activatable(True)
-        cell1.set_property('mode', gtk.CELL_RENDERER_MODE_ACTIVATABLE)
+        cell1.set_property('mode', Gtk.CellRendererMode.ACTIVATABLE)
         cell1.connect( 'toggled', self.on_toggle, liststore )
-        tvcolumn1 = gtk.TreeViewColumn(_('Active'), cell1)
+        tvcolumn1 = Gtk.TreeViewColumn(_('Active'), cell1)
 
         tvcolumn1.add_attribute( cell1, "active", 0)
 
-        cell2 = gtk.CellRendererText()
-        tvcolumn2 = gtk.TreeViewColumn(_('Name'), cell2, text=1)
+        cell2 = Gtk.CellRendererText()
+        tvcolumn2 = Gtk.TreeViewColumn(_('Name'), cell2, text=1)
 
         self.list.append_column(tvcolumn1)
         self.list.append_column(tvcolumn2)
@@ -89,7 +89,7 @@ class PluginConfiguration(object):
 #            self.cfgProvider.setConfigValue('active_plugins'
 
 
-        liststore = gtk.ListStore(GObject.TYPE_BOOLEAN, GObject.TYPE_STRING)
+        liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, GObject.TYPE_STRING)
         plugins = self.pluginManager.getPlugins()
   
         for p in plugins:

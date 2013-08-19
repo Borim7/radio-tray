@@ -20,9 +20,10 @@
 
 
 from Plugin import Plugin
-import gtk
-import gobject
-import pynotify
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Notify
+from gi.repository import GdkPixbuf
 from lib.common import APP_ICON, APPNAME
 from events.EventManager import EventManager
 
@@ -61,18 +62,18 @@ class NotificationPlugin(Plugin):
             
             if self.notif == None:
         
-                if pynotify.init(APPNAME):
-                    self.notif = pynotify.Notification(title, message)
-                    self.notif.set_urgency(pynotify.URGENCY_LOW)
+                if Notify.init(APPNAME):
+                    self.notif = Notify.Notification.new(title, message, None)
+                    self.notif.set_urgency(Notify.Urgency.LOW)
                     self.set_icon(data)
-                    self.notif.set_timeout(pynotify.EXPIRES_DEFAULT)
+                    self.notif.set_timeout(Notify.EXPIRES_DEFAULT)
                     self.notif.show()
                 else:
                     self.log.error('Error: there was a problem initializing the pynotify module')
             
             else:
                 self.set_icon(data)
-                self.notif.update(title, message)
+                self.notif.update(title, message, None)
                 self.notif.show()
 
 
@@ -81,12 +82,12 @@ class NotificationPlugin(Plugin):
         if('icon' in data.keys()):
 
             try:
-                pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(data['icon'], 48, 48)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(data['icon'], 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
             except Exception, e:
-                pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(APP_ICON, 48, 48)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
                 print e
         else:
-            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(APP_ICON, 48, 48)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
             self.notif.set_icon_from_pixbuf(pixbuf)

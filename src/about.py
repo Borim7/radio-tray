@@ -1,29 +1,29 @@
 # -*- coding: utf-8 -*-
-import gtk
+from gi.repository import Gtk, GObject, Gdk, GdkPixbuf
 from lib import i18n
 import lib.common as common
 
 
 def on_email(about, mail):
-    gtk.show_uri(gtk.gdk.Screen(), "mailto:%s" % mail, 0L)
+    Gtk.show_uri(Gdk.Screen(), "mailto:%s" % mail, 0L)
 
 def on_url(about, link):
-    gtk.show_uri(gtk.gdk.Screen(), link, 0L)
+    Gtk.show_uri(Gdk.Screen(), link, 0L)
 
-gtk.about_dialog_set_email_hook(on_email)
-gtk.about_dialog_set_url_hook(on_url)
+#Gtk.about_dialog_set_email_hook(on_email)
+#Gtk.about_dialog_set_url_hook(on_url)
 
 TRANSLATORS = _("translator-credits")
 
-class AboutDialog(gtk.AboutDialog):
+class AboutDialog(Gtk.AboutDialog):
     def __init__(self, parent = None):
-        gtk.AboutDialog.__init__(self)
+        GObject.GObject.__init__(self)
         self.set_icon_from_file(common.APP_ICON)
 
         self.set_name(common.APPNAME)
         self.set_version(common.APPVERSION)
         self.set_copyright(common.COPYRIGHTS)
-        self.set_logo(gtk.gdk.pixbuf_new_from_file(common.APP_ICON))
+        self.set_logo(GdkPixbuf.Pixbuf.new_from_file(common.APP_ICON))
         self.set_translator_credits(TRANSLATORS)
         self.set_license(common.LICENSE)
         self.set_website(common.WEBSITE)
