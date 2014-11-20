@@ -158,6 +158,7 @@ class RadioTray(object):
             else:
                 self.logger.info('Copying default bookmarks file to user directory')
                 copy2(DEFAULT_RADIO_LIST, self.filename)
+                os.chmod(self.filename, 0644)
 
         if not os.access(self.cfg_filename, os.R_OK|os.W_OK):
 
