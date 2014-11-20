@@ -8,7 +8,7 @@ try:
     from defs import *
 except:
     APPVERSION = "0.7.4"
-    datadir = "/usr/share"
+    datadir = "/usr/local/share"
 
 # Application info
 APPNAME = "Radio Tray"
