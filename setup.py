@@ -13,7 +13,7 @@ import sys
 import subprocess
 import platform
 
-from src.lib.common import APPNAME, APPVERSION
+from src.lib.common import APPNAME, APPVERSION, datadir
 
 PO_DIR = 'po'
 MO_DIR = os.path.join('build', 'mo')
@@ -75,6 +75,8 @@ if platform.system() == 'FreeBSD':
 else:
   man_dir = 'share/man'
 
+if platform.system() == 'OpenBSD':
+  datadir = '/usr/local/share'
 
 setup(name='radiotray',
     version=APPVERSION,
