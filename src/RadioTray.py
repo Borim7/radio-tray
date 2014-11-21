@@ -164,6 +164,7 @@ class RadioTray(object):
 
             self.logger.warn('Configuration file not found. Copying default configuration file to user directory')
             copy2(DEFAULT_CONFIG_FILE, self.cfg_filename)
+            os.chmod(self.filename, 0644)
 
 
     def configLogging(self):
