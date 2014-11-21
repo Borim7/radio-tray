@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
-from distutils.core import setup
+from setuptools import setup
 from distutils.command.install_data import install_data
 from distutils.dist import Distribution
 from distutils.command.build import build
@@ -75,8 +74,6 @@ if platform.system() == 'FreeBSD':
 else:
   man_dir = 'share/man'
 
-if platform.system() == 'OpenBSD':
-  datadir = '/usr/local/share'
 
 setup(name='radiotray',
     version=APPVERSION,
