@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import platform
 import i18n
 from xdg.BaseDirectory import xdg_data_home
 
@@ -9,7 +8,7 @@ try:
     from defs import *
 except:
     APPVERSION = "0.7.4"
-    if platform.system() == 'OpenBSD':
+    if os.uname()[0] == 'OpenBSD':
         datadir = "/usr/local/share"
     else:
         datadir = "/usr/share"
