@@ -12,7 +12,7 @@ import sys
 import subprocess
 import platform
 
-from src.lib.common import APPNAME, APPVERSION, datadir
+from src.lib.common import APPNAME, APPVERSION
 
 PO_DIR = 'po'
 MO_DIR = os.path.join('build', 'mo')
