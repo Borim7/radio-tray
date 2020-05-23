@@ -121,19 +121,19 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Gives all meta data available for the currently played element.
         """
         return {
-            'location' : unicode(self.provider.getRadioUrl(self.mediator.getCurrentRadio())),
-            'artist'      : unicode(self.mediator.getCurrentRadio()),
-            'title'      : unicode(self.mediator.getCurrentMetaData()),
-            'album'      : u'',
-            'tracknumber': u'',
+            'location' : str(self.provider.getRadioUrl(self.mediator.getCurrentRadio())),
+            'artist'      : str(self.mediator.getCurrentRadio()),
+            'title'      : str(self.mediator.getCurrentMetaData()),
+            'album'      : '',
+            'tracknumber': '',
             'time'       : 0,
             'mtime'      : 0,
-            'genre'      : u'',
-            'comment'    : u'',
+            'genre'      : '',
+            'comment'    : '',
             'rating'     : 0,
             'year'       : 0,
             'date'       : 0,
-            'arturl'     : u'',
+            'arturl'     : '',
             'audio-bitrate': self.mediator.bitrate,
             'audio-samplerate': self.mediator.bitrate
         }

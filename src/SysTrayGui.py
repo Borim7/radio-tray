@@ -27,11 +27,11 @@ try:
     from gi.repository import Gtk
     #import Gtk.glade
 except Exception as e:
-    print e
+    print(e)
     sys.exit(1)
 
-from lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
-from lib.utils import html_escape
+from .lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
+from .lib.utils import html_escape
 
 # This class handles the gui for the systray mode
 class SysTrayGui:

@@ -57,7 +57,7 @@ class HistoryPlugin(Plugin):
 
     def on_song_changed(self, data):
 
-        if('title' in data.keys()):
+        if('title' in list(data.keys())):
             title = data['title']
             if title != self.last_title:
                 self.last_title = title

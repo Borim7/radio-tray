@@ -25,7 +25,7 @@ try:
     from gi.repository import Gtk
     from gi.repository import Gdk
 except Exception as e:
-    print e
+    print(e)
     pass
 #try:
     #from gi.repository import Gtk
@@ -34,20 +34,20 @@ except Exception as e:
 #    print e
 #    sys.exit(1)
 
-from AudioPlayerGStreamer import AudioPlayerGStreamer
-from XmlDataProvider import XmlDataProvider
-from BookmarkConfiguration import BookmarkConfiguration
-from PluginConfiguration import PluginConfiguration
-from lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
-from lib import i18n
-from about import AboutDialog
-from lib.utils import html_escape
-from GuiChooserConfiguration import GuiChooserConfiguration
-from events.EventManager import EventManager
-from SysTrayGui import SysTrayGui
-from AppIndicatorGui import AppIndicatorGui
-from TooltipManager import TooltipManager
-from Context import Context
+from .AudioPlayerGStreamer import AudioPlayerGStreamer
+from .XmlDataProvider import XmlDataProvider
+from .BookmarkConfiguration import BookmarkConfiguration
+from .PluginConfiguration import PluginConfiguration
+from .lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
+from .lib import i18n
+from .about import AboutDialog
+from .lib.utils import html_escape
+from .GuiChooserConfiguration import GuiChooserConfiguration
+from .events.EventManager import EventManager
+from .SysTrayGui import SysTrayGui
+from .AppIndicatorGui import AppIndicatorGui
+from .TooltipManager import TooltipManager
+from .Context import Context
 
 import dbus
 import textwrap

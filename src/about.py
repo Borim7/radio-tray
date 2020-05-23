@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from gi.repository import Gtk, GObject, Gdk, GdkPixbuf
-from lib import i18n
-import lib.common as common
+from .lib import i18n
+from . import lib.common as common
 
 
 def on_email(about, mail):
-    Gtk.show_uri(Gdk.Screen(), "mailto:%s" % mail, 0L)
+    Gtk.show_uri(Gdk.Screen(), "mailto:%s" % mail, 0)
 
 def on_url(about, link):
-    Gtk.show_uri(Gdk.Screen(), link, 0L)
+    Gtk.show_uri(Gdk.Screen(), link, 0)
 
 #Gtk.about_dialog_set_email_hook(on_email)
 #Gtk.about_dialog_set_url_hook(on_url)

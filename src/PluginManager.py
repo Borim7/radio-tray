@@ -18,10 +18,10 @@
 #
 ##########################################################################
 
-from lib.common import USER_PLUGIN_PATH
-from lib.common import SYSTEM_PLUGIN_PATH
-from PluginInfo import PluginInfo
-from XmlConfigProvider import XmlConfigProvider
+from .lib.common import USER_PLUGIN_PATH
+from .lib.common import SYSTEM_PLUGIN_PATH
+from .PluginInfo import PluginInfo
+from .XmlConfigProvider import XmlConfigProvider
 import os
 import sys
 import logging
@@ -42,13 +42,13 @@ class PluginManager:
         self.log = logging.getLogger('radiotray')
 
     def getPlugins(self):
-        return self.pluginInfos.values()
+        return list(self.pluginInfos.values())
 
     def activatePlugins(self):
 
         active = self.cfgProvider.getConfigList('active_plugins')
 
-        for info in self.pluginInfos.values():
+        for info in list(self.pluginInfos.values()):
 
             if info.name in active:
                 plugin = info.instance
@@ -122,8 +122,8 @@ class PluginManager:
         self.pluginInfos = self.parsePluginInfo(pluginFiles)
 
 
-        for info in self.pluginInfos.values():
-            print info.name + ", " + info.desc + ", " + info.script + ", " + info.author
+        for info in list(self.pluginInfos.values()):
+            print(info.name + ", " + info.desc + ", " + info.script + ", " + info.author)
             m = __import__(info.clazz)
             m2 = getattr(m, info.clazz)
             info.instance = m2()

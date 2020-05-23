@@ -17,25 +17,25 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from XmlDataProvider import XmlDataProvider
-from XmlConfigProvider import XmlConfigProvider
-from AudioPlayerGStreamer import AudioPlayerGStreamer
-from SysTray import SysTray
-from StateMediator import StateMediator
-from NotificationManager import NotificationManager
-from events.EventManager import EventManager
-from events.EventMngNotificationWrapper import EventMngNotificationWrapper
-from events.EventSubscriber import EventSubscriber
-from DbusFacade import DbusFacade
-from TooltipManager import TooltipManager
-from PluginManager import PluginManager
+from .XmlDataProvider import XmlDataProvider
+from .XmlConfigProvider import XmlConfigProvider
+from .AudioPlayerGStreamer import AudioPlayerGStreamer
+from .SysTray import SysTray
+from .StateMediator import StateMediator
+from .NotificationManager import NotificationManager
+from .events.EventManager import EventManager
+from .events.EventMngNotificationWrapper import EventMngNotificationWrapper
+from .events.EventSubscriber import EventSubscriber
+from .DbusFacade import DbusFacade
+from .TooltipManager import TooltipManager
+from .PluginManager import PluginManager
 import os
 from shutil import move, copy2
-from lib.common import APPDIRNAME, USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
+from .lib.common import APPDIRNAME, USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
     DEFAULT_RADIO_LIST, OPTIONS_CFG_NAME, DEFAULT_CONFIG_FILE,\
     USER_PLUGIN_PATH, LOGFILE
-import mpris
-from GuiChooserConfiguration import GuiChooserConfiguration
+from . import mpris
+from .GuiChooserConfiguration import GuiChooserConfiguration
 import logging
 from logging import handlers
 
@@ -158,13 +158,13 @@ class RadioTray(object):
             else:
                 self.logger.info('Copying default bookmarks file to user directory')
                 copy2(DEFAULT_RADIO_LIST, self.filename)
-                os.chmod(self.filename, 0644)
+                os.chmod(self.filename, 0o644)
 
         if not os.access(self.cfg_filename, os.R_OK|os.W_OK):
 
             self.logger.warn('Configuration file not found. Copying default configuration file to user directory')
             copy2(DEFAULT_CONFIG_FILE, self.cfg_filename)
-            os.chmod(self.filename, 0644)
+            os.chmod(self.filename, 0o644)
 
 
     def configLogging(self):

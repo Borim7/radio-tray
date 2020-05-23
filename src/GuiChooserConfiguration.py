@@ -29,12 +29,12 @@ try:
     #import Gtk.glade
     import os
 except Exception as e:
-    print e
+    print(e)
     sys.exit(1)
 
-from lib.common import APP_ICON_ON
-from lib import utils
-from lib import i18n
+from .lib.common import APP_ICON_ON
+from .lib import utils
+from .lib import i18n
 import uuid
 import logging
 

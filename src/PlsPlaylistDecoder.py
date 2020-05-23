@@ -17,8 +17,8 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib2
-from lib.common import USER_AGENT
+import urllib.request, urllib.error, urllib.parse
+from .lib.common import USER_AGENT
 import logging
 
 class PlsPlaylistDecoder:
@@ -42,9 +42,9 @@ class PlsPlaylistDecoder:
             
             self.log.info('Downloading playlist...')
             
-            req = urllib2.Request(url)
+            req = urllib.request.Request(url)
             req.add_header('User-Agent', USER_AGENT)
-            f = urllib2.urlopen(req)
+            f = urllib.request.urlopen(req)
             str = f.read()
             f.close()
             

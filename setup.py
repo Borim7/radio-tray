@@ -46,10 +46,10 @@ class BuildData(build):
         try:
           rc = subprocess.call(['msgfmt', '-o', mo, po])
           if rc != 0:
-            raise Warning, "msgfmt returned %d" % rc
-        except Exception, e:
-          print "Building gettext files failed.  Try setup.py --without-gettext [build|install]"
-          print "%s: %s" % (type(e), e)
+            raise Warning("msgfmt returned %d" % rc)
+        except Exception as e:
+          print("Building gettext files failed.  Try setup.py --without-gettext [build|install]")
+          print("%s: %s" % (type(e), e))
           sys.exit(1)
 class InstallData(install_data):
   def run (self):

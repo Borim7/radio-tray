@@ -79,15 +79,15 @@ class NotificationPlugin(Plugin):
 
     def set_icon(self, data):
         #some radios publish cover data in the 'homepage' tag
-        if('icon' in data.keys()):
+        if('icon' in list(data.keys())):
 
             try:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(data['icon'], 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
-            except Exception, e:
+            except Exception as e:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
-                print e
+                print(e)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
             self.notif.set_icon_from_pixbuf(pixbuf)

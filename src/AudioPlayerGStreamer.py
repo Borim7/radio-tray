@@ -31,11 +31,11 @@ try:
     from gi.repository import Gst
     Gst.init(None)
 except Exception as e:
-    print e
+    print(e)
 
-from StreamDecoder import StreamDecoder
-from lib.common import USER_AGENT
-from events.EventManager import EventManager
+from .StreamDecoder import StreamDecoder
+from .lib.common import USER_AGENT
+from .events.EventManager import EventManager
 from threading import Timer
 import logging
 

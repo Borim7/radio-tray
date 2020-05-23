@@ -17,11 +17,11 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from lxml import etree
 from lxml import objectify
-from StringIO import StringIO
-from lib.common import USER_AGENT
+from io import StringIO
+from .lib.common import USER_AGENT
 import logging
 
 class XspfPlaylistDecoder:
@@ -45,9 +45,9 @@ class XspfPlaylistDecoder:
 
         self.log.info('Downloading playlist...')
 
-        req = urllib2.Request(url)
+        req = urllib.request.Request(url)
         req.add_header('User-Agent', USER_AGENT)
-        f = urllib2.urlopen(req)
+        f = urllib.request.urlopen(req)
         str = f.read()
         f.close()
 

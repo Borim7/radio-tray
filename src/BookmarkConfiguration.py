@@ -30,13 +30,13 @@ try:
     #import Gtk.glade
     import os
 except Exception as e:
-    print e
+    print(e)
     sys.exit(1)
 
-from XmlDataProvider import XmlDataProvider
-from lib.common import APP_ICON_ON
-from lib import utils
-from lib import i18n
+from .XmlDataProvider import XmlDataProvider
+from .lib.common import APP_ICON_ON
+from .lib import utils
+from .lib import i18n
 import uuid
 import logging
 
@@ -132,7 +132,7 @@ class BookmarkConfiguration(object):
         # enable drag and drop support
         self.list.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [], Gdk.DragAction.MOVE)
         self.list.enable_model_drag_dest([], Gdk.DragAction.MOVE)
-        print "config"
+        print("config")
         self.list.drag_dest_add_text_targets()
         self.list.drag_source_add_text_targets()
 
@@ -196,10 +196,10 @@ class BookmarkConfiguration(object):
             new = model.insert_after(parent, target, model[source][:])
                         
         else:
-            print "No data copied!"
+            print("No data copied!")
             return
             
-        nrChild = range(model.iter_n_children(source)) 
+        nrChild = list(range(model.iter_n_children(source))) 
         while(model.iter_n_children(source) > 0):
             child = model.iter_nth_child(source, 0)
             self.copyRow(treeview, model, child, new, Gtk.TreeViewDropPosition.INTO_OR_BEFORE)
@@ -233,7 +233,7 @@ class BookmarkConfiguration(object):
         sourceName = model.get_value(source,1)
         targetName = model.get_value(target,1)
 
-        print "source: " + sourceName + " , target: " + targetName;
+        print("source: " + sourceName + " , target: " + targetName);
         
         is_sane = self.checkSanity(model, source, target)
         is_parentable = self.checkParentability(model, target, drop_position)
@@ -295,7 +295,7 @@ class BookmarkConfiguration(object):
 
         for group in self.dataProvider.listGroupNames():
             liststore.append([group])
-            print "group found: " + group
+            print("group found: " + group)
             
         self.radioGroup.set_model(liststore)
         
@@ -326,7 +326,7 @@ class BookmarkConfiguration(object):
                 if self.dataProvider.addRadio(name, url, new_group):
                     self.load_data()
             else:
-                print 'No radio information provided!'
+                print('No radio information provided!')
         self.config.hide()
 
     def on_edit_bookmark_clicked(self, widget):
@@ -464,7 +464,7 @@ class BookmarkConfiguration(object):
 
             selectedRadioName = model.get_value(iter,0)
             separatorFlag = model.get_value(iter,1)
-            print selectedRadioName + " - " + separatorFlag
+            print(selectedRadioName + " - " + separatorFlag)
 
             # if separator then just remove it
             if not separatorFlag.startswith("[separator-"):

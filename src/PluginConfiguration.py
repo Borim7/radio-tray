@@ -30,10 +30,10 @@ try:
     from gi.repository import GObject
     GObject.threads_init()
     import os
-    from lib import utils
-    from lib.common import APP_ICON_ON
+    from .lib import utils
+    from .lib.common import APP_ICON_ON
 except Exception as e:
-    print e
+    print(e)
 import logging
 
 class PluginConfiguration(object):
