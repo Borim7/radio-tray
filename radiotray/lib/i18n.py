@@ -10,7 +10,7 @@ LC_ALL = locale.setlocale(locale.LC_ALL, '')
 try:
     import gettext
     from gettext import gettext as _, ngettext
-    gettext.install(program, str=True)
+    gettext.install(program)
     gettext.textdomain(program)
     if hasattr(locale, 'textdomain'):
         locale.textdomain(program)

@@ -1,13 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import dbus
 import sys, os, string
-from .RadioTray import RadioTray
-from dbus import DBusException
 from dbus.mainloop.glib import threads_init
 
+from radiotray.RadioTray import RadioTray
+
 threads_init()
+
 current_path = os.path.realpath(__file__)
 basedir = os.path.dirname(os.path.realpath(__file__))
 if not os.path.exists(os.path.join(basedir, "radiotray.py")):
@@ -33,7 +34,7 @@ def main(argv):
                 playUrl = radiotray.get_dbus_method('playUrl', 'net.sourceforge.radiotray')
                 playUrl(argv[0])
 
-        except DBusException:
+        except dbus.DBusException:
             RadioTray(argv[0])
     else:
         RadioTray()

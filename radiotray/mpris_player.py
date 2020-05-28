@@ -63,7 +63,7 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Stop playing
         """
         if self.mediator.isPlaying :
-			self.lastRadio = self.mediator.getCurrentRadio()
+            self.lastRadio = self.mediator.getCurrentRadio()
         self.mediator.stop()
 
     @dbus.service.method(INTERFACE_NAME)

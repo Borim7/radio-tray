@@ -109,7 +109,7 @@ class RadioTray(object):
         dbus = DbusFacade(self.provider, self.mediator)
         #dbus_mpris = mpris.RadioTrayMpris(self.provider, self.mediator)
 
-	#load plugin manager
+    #load plugin manager
         self.pluginManager = PluginManager(eventManagerWrapper, eventSubscriber, self.provider, self.cfg_provider, self.mediator, tooltipManager, self.systray.getPluginMenu())
         self.systray.setPluginManager(self.pluginManager)
         self.pluginManager.discoverPlugins()

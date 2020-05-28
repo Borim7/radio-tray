@@ -90,9 +90,9 @@ ICON_FILE = os.path.join(USER_CFG_PATH,'icon')
 
 # user-agent
 try:
-	import platform
-	USER_AGENT = "%s/%s (%s %s; %s/%s (%s))" % ("RadioTray", APPVERSION, platform.system(), platform.machine(),
-												platform.linux_distribution()[0], platform.linux_distribution()[1],
-												platform.linux_distribution()[2])
+    import platform
+    USER_AGENT = "%s/%s (%s %s; %s/%s (%s))" % ("RadioTray", APPVERSION, platform.system(), platform.machine(),
+                                                platform.linux_distribution()[0], platform.linux_distribution()[1],
+                                                platform.linux_distribution()[2])
 except:
-	USER_AGENT = "RadioTray/" + APPVERSION
+    USER_AGENT = "RadioTray/" + APPVERSION

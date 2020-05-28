@@ -176,7 +176,7 @@ class SysTray(object):
     
     
 
-		
+        
 
     def update_radios(self):
         self.gui.update_radios()

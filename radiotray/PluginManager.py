@@ -18,10 +18,10 @@
 #
 ##########################################################################
 
-from .lib.common import USER_PLUGIN_PATH
-from .lib.common import SYSTEM_PLUGIN_PATH
-from .PluginInfo import PluginInfo
-from .XmlConfigProvider import XmlConfigProvider
+from radiotray.lib.common import USER_PLUGIN_PATH
+from radiotray.lib.common import SYSTEM_PLUGIN_PATH
+from radiotray.PluginInfo import PluginInfo
+from radiotray.XmlConfigProvider import XmlConfigProvider
 import os
 import sys
 import logging
@@ -157,12 +157,10 @@ class PluginManager:
             correctFile = os.path.join(USER_PLUGIN_PATH, filename[:filename.find('.')] + '.config')
 
             if(os.path.exists(originalFile)):
-		    
+                os.path.join(os.path.dirname(p), filename[:filename.find('.')] + '.config')
 
-		    os.path.join(os.path.dirname(p), filename[:filename.find('.')] + '.config')
-
-		    if (not os.path.exists(correctFile)):
-		        shutil.copyfile(originalFile, correctFile)
+            if (not os.path.exists(correctFile)):
+                shutil.copyfile(originalFile, correctFile)
 
             pInfo.configFile = correctFile
             infos[pInfo.name] = pInfo

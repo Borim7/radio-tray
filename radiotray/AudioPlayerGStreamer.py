@@ -54,7 +54,7 @@ class AudioPlayerGStreamer:
         self.log.debug("Initializing gstreamer...")
         self.souphttpsrc = Gst.ElementFactory.make("souphttpsrc", "source")
         self.souphttpsrc.set_property("user-agent", USER_AGENT)
-		
+        
         self.log.debug("Loading playbin...");
         self.player = Gst.ElementFactory.make("playbin", "player")
         fakesink = Gst.ElementFactory.make("fakesink", "fakesink")

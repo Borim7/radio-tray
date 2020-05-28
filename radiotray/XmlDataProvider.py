@@ -20,6 +20,12 @@
 ##########################################################################
 import os
 from lxml import etree
+
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+except:
+    pass
 from gi.repository import Gtk
 import logging
 

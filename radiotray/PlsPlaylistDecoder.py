@@ -18,7 +18,7 @@
 #
 ##########################################################################
 import urllib.request, urllib.error, urllib.parse
-from .lib.common import USER_AGENT
+from radiotray.lib.common import USER_AGENT
 import logging
 
 class PlsPlaylistDecoder:
@@ -51,7 +51,7 @@ class PlsPlaylistDecoder:
             self.log.info('Playlist downloaded')
             self.log.info('Decoding playlist...')
             
-	    playlist = []
+            playlist = []
             lines = str.splitlines()
             for line in lines:
 

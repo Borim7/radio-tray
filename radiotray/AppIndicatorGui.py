@@ -130,7 +130,7 @@ class AppIndicatorGui:
             self.menu_plugins_item = Gtk.MenuItem("Plugins")
             self.menu_plugins = Gtk.Menu()
             self.menu_plugins.append(menu_config_plugin)
-            self.menu_plugins.append(Gtk.MenuItem())	#add separator
+            self.menu_plugins.append(Gtk.MenuItem())    #add separator
             self.menu_plugins_item.set_submenu(self.menu_plugins)
 
         menu.append(self.menu_plugins_item)

@@ -34,11 +34,14 @@ class XmlConfigProvider:
 
 
     def loadFromFile(self):
-        self.root = etree.parse(self.filename).getroot()
+        try:
+            self.root = etree.parse(self.filename).getroot()
+        except etree.XMLSyntaxError:
+            raise Exception('Configuration file corrupted: ' + self.filename)
 
 
     def saveToFile(self):
-        out_file = open(self.filename, "w")
+        out_file = open(self.filename, "wb")
         out_file.write(etree.tostring(self.root, method='xml', encoding='UTF-8', pretty_print=True))
         out_file.close()
 

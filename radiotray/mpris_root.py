@@ -18,8 +18,8 @@ http://wiki.xmms2.xmms.se/wiki/MPRIS#.2F_.28Root.29_object_methods
 """
 import dbus
 import dbus.service
-from . import lib.common as common
-from .SysTray import SysTray
+import radiotray.lib.common as common
+from radiotray.SysTray import SysTray
 
 INTERFACE_NAME = 'org.freedesktop.MediaPlayer'
 

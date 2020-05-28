@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from gi.repository import Gtk, GObject, Gdk, GdkPixbuf
-from .lib import i18n
-from . import lib.common as common
+from radiotray.lib import i18n
+import radiotray.lib.common as common
 
 
 def on_email(about, mail):
