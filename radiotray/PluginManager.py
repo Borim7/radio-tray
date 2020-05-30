@@ -156,11 +156,9 @@ class PluginManager:
             originalFile = os.path.join(os.path.dirname(p), filename[:filename.find('.')] + '.config')
             correctFile = os.path.join(USER_PLUGIN_PATH, filename[:filename.find('.')] + '.config')
 
-            if(os.path.exists(originalFile)):
-                os.path.join(os.path.dirname(p), filename[:filename.find('.')] + '.config')
-
-            if (not os.path.exists(correctFile)):
-                shutil.copyfile(originalFile, correctFile)
+            # copy template of plugin config into home, when config missing
+            if os.path.exists(originalFile) and not os.path.exists(correctFile):
+                    shutil.copyfile(originalFile, correctFile)
 
             pInfo.configFile = correctFile
             infos[pInfo.name] = pInfo

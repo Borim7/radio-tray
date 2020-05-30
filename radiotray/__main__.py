@@ -1,43 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import dbus
-import sys, os, string
-from dbus.mainloop.glib import threads_init
+import sys
 
-from radiotray.RadioTray import RadioTray
-
-threads_init()
-
-current_path = os.path.realpath(__file__)
-basedir = os.path.dirname(os.path.realpath(__file__))
-if not os.path.exists(os.path.join(basedir, "radiotray.py")):
-    if os.path.exists(os.path.join(os.getcwd(), "radiotray.py")):
-        basedir = os.getcwd()
-sys.path.insert(0, basedir)
-os.chdir(basedir)
-
-def main(argv):
-    if(len(argv) == 1):
-        print("Trying to load URL: " + argv[0])
-
-        try:
-            bus = dbus.SessionBus()
-            radiotray = bus.get_object('net.sourceforge.radiotray', '/net/sourceforge/radiotray')
-
-
-            if argv[0] == '--config':
-                print("Radio Tray already running.")
-            else:
-                print("Setting current radio through DBus...")
-
-                playUrl = radiotray.get_dbus_method('playUrl', 'net.sourceforge.radiotray')
-                playUrl(argv[0])
-
-        except dbus.DBusException:
-            RadioTray(argv[0])
-    else:
-        RadioTray()
+import radiotray.RadioTray as RadioTray
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    RadioTray.main(sys.argv[1:])

@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 
-import sys,os
-from os.path import dirname, join, pardir
-
-try:
-    from radiotray import radiotray_runner
-except ImportError:
-    basedir = os.path.dirname(os.path.realpath(__file__))
-    workdir = join(basedir,'src')
-    sys.path.insert(0, workdir)
-    os.chdir(workdir)
-    import radiotray_runner 
+import sys
+import radiotray.RadioTray as RadioTray
     
-radiotray_runner.main(sys.argv[1:])
+RadioTray.main(sys.argv[1:])

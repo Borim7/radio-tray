@@ -17,6 +17,11 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
+import dbus
+import sys, os, string
+import dbus.mainloop.glib
+from shutil import move, copy2
+
 from .XmlDataProvider import XmlDataProvider
 from .XmlConfigProvider import XmlConfigProvider
 from .AudioPlayerGStreamer import AudioPlayerGStreamer
@@ -29,8 +34,6 @@ from .events.EventSubscriber import EventSubscriber
 from .DbusFacade import DbusFacade
 from .TooltipManager import TooltipManager
 from .PluginManager import PluginManager
-import os
-from shutil import move, copy2
 from .lib.common import APPDIRNAME, USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
     DEFAULT_RADIO_LIST, OPTIONS_CFG_NAME, DEFAULT_CONFIG_FILE,\
     USER_PLUGIN_PATH, LOGFILE
@@ -175,6 +178,38 @@ class RadioTray(object):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
+
+def main(argv):
+    dbus.mainloop.glib.threads_init()
+
+    current_path = os.path.realpath(__file__)
+    basedir = os.path.dirname(os.path.realpath(__file__))
+    if not os.path.exists(os.path.join(basedir, "radiotray.py")):
+        if os.path.exists(os.path.join(os.getcwd(), "radiotray.py")):
+            basedir = os.getcwd()
+    sys.path.insert(0, basedir)
+    os.chdir(basedir)
+
+    if(len(argv) == 1):
+        print("Trying to load URL: " + argv[0])
+
+        try:
+            bus = dbus.SessionBus()
+            radiotray = bus.get_object('net.sourceforge.radiotray', '/net/sourceforge/radiotray')
+
+
+            if argv[0] == '--config':
+                print("Radio Tray already running.")
+            else:
+                print("Setting current radio through DBus...")
+
+                playUrl = radiotray.get_dbus_method('playUrl', 'net.sourceforge.radiotray')
+                playUrl(argv[0])
+
+        except dbus.DBusException:
+            RadioTray(argv[0])
+    else:
+        RadioTray()
 
 if __name__ == "__main__":
         radio = RadioTray()
