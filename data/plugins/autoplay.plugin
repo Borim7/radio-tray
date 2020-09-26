@@ -1,0 +1,6 @@
+[RadioTrayPlugin]
+name=Auto Play Last Station
+desc=Playing the last station on radio tray startup.
+script=AutoPlayPlugin.py
+class=AutoPlayPlugin
+author=Matthias Hofmann
