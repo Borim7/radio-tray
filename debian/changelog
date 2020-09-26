@@ -1,3 +1,9 @@
+radiotray (0.8.0) unstable; urgency=low
+
+  * Switch to python 3
+
+ -- Matthias <borim7@web.de>  Sat, 26 Sep 2020 21:32:16 +0200
+
 radiotray (0.7.3) unstable; urgency=low
 
   * Added buffer size control to configuration file ("buffer_sizer")
@@ -12,7 +18,7 @@ radiotray (0.7.3) unstable; urgency=low
   * Fix problem with segmentatinon faults
   * Fix problem with temporary network failures
 
- -- Carlos Ribeiro <carlosmribeiro1@gmail.com> Thu, 09 Aug 2012 22:45:16 +0100
+ -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Thu, 09 Aug 2012 22:45:16 +0100
 
 
 radiotray (0.7.2) unstable; urgency=low
@@ -20,7 +26,7 @@ radiotray (0.7.2) unstable; urgency=low
   * Added several translations
   * Fixed issue with icon on appindicator
 
- -- Carlos Ribeiro <carlosmribeiro1@gmail.com> Thu, 02 Jan 2012 00:59:11 +0100
+ -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Thu, 02 Jan 2012 00:59:11 +0100
 
 
 radiotray (0.7.1) unstable; urgency=low
@@ -43,7 +49,7 @@ radiotray (0.7) unstable; urgency=low
   * Read-only bookmark support
   * Updated translations
   * Increased default radio stations list
-  * Fix for MMS redirects 
+  * Fix for MMS redirects
 
  -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Tue, 06 Sep 2011 22:23:18 +0100
 
@@ -51,7 +57,7 @@ radiotray (0.6.4) unstable; urgency=low
 
   * Several bug fixes
   * Updated translations
-  * Added first run configuration dialog 
+  * Added first run configuration dialog
 
  -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Wed, 13 Jul 2011 11:46:28 +0100
 
@@ -83,9 +89,9 @@ radiotray (0.6.1) unstable; urgency=low
   * Added option to reload bookmarks
   * Improved notification system
   * Increased number of stations on the default bookmarks file
-  
- -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Fri, 16 Sep 2010 22:47:12 +1000  
-  
+
+ -- Carlos Ribeiro <carlosmribeiro1@gmail.com>  Fri, 16 Sep 2010 22:47:12 +1000
+
 radiotray (0.6) unstable; urgency=low
 
   * Updated translations

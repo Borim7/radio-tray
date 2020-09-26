@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from setuptools import setup
 from distutils.command.install_data import install_data
@@ -12,7 +12,7 @@ import sys
 import subprocess
 import platform
 
-from src.lib.common import APPNAME, APPVERSION
+from radiotray.lib.common import APPNAME, APPVERSION
 
 PO_DIR = 'po'
 MO_DIR = os.path.join('build', 'mo')
@@ -51,6 +51,7 @@ class BuildData(build):
           print("Building gettext files failed.  Try setup.py --without-gettext [build|install]")
           print("%s: %s" % (type(e), e))
           sys.exit(1)
+
 class InstallData(install_data):
   def run (self):
     self.data_files.extend (self._find_mo_files ())
@@ -82,7 +83,7 @@ setup(name='radiotray',
     url='http://radiotray.sourceforge.net',
     description='Radio Tray is an online radio stream player',
     license='GPL',
-    scripts=['radiotray'],
+    scripts=['bin/radiotray'],
     data_files = [
       ('share/applications', glob.glob('data/*.desktop')),
       ('share/doc/radiotray-%s' % APPVERSION,
@@ -93,7 +94,7 @@ setup(name='radiotray',
       ('share/radiotray', ['data/configBookmarks.glade', 'data/bookmarks.xml', 'data/config.xml', 'data/configGui.glade', 'data/configPlugins.glade']),
       ('share/radiotray/plugins', glob.glob('data/plugins/*')),
     ],
-    package_dir={'radiotray': 'src'},
+    package_dir={'radiotray': 'radiotray'},
     packages = ['radiotray', 'radiotray.lib', 'radiotray.events'],
     cmdclass={'build': BuildData, 'install_data': InstallData,},
     distclass=RadioTrayDist,
