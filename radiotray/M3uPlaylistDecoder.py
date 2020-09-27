@@ -35,7 +35,7 @@ class M3uPlaylistDecoder:
         else:
             lines = firstBytes.splitlines()
             for line in lines:
-                if(line.startswith("http://")):
+                if(line.startswith(b"http://")):
                     return True
         return False
 

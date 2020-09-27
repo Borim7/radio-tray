@@ -68,7 +68,7 @@ class XmlDataProvider:
 
     def saveToFile(self):
         self.log.info('Saving bookmarks file: %s', self.filename)
-        out_file = open(self.filename, "w")
+        out_file = open(self.filename, "wb")
         out_file.write(etree.tostring(self.root, method='xml', encoding='UTF-8', pretty_print=True))
         out_file.close()
         self.log.debug('Bookmarks file save with success')

@@ -33,7 +33,7 @@ class AsfPlaylistDecoder:
 
     def isStreamValid(self, contentType, firstBytes):
 
-        if('video/x-ms-asf' in contentType and firstBytes.strip().lower().startswith('[reference]')):
+        if('video/x-ms-asf' in contentType and firstBytes.strip().lower().startswith(b'[reference]')):
             self.log.info('Stream is readable by ASF Playlist Decoder')
             return True
         else:

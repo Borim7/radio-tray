@@ -97,6 +97,7 @@ class SysTray(object):
 
         # execute gui chooser
         try:
+            gi.require_version('AppIndicator3', '0.1')
             from gi.repository import AppIndicator3
             self.gui_engine = self.cfg_provider.getConfigValue("gui_engine")
             if(self.gui_engine == None):
