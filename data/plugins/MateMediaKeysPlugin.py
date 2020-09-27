@@ -18,7 +18,7 @@
 #
 ##########################################################################
 
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
 import dbus
 
 class MateMediaKeysPlugin(Plugin):

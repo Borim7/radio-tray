@@ -17,9 +17,9 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from events.EventSubscriber import EventSubscriber
-from events.EventManager import EventManager
-from Plugin import Plugin
+from radiotray.events.EventSubscriber import EventSubscriber
+from radiotray.events.EventManager import EventManager
+from radiotray.Plugin import Plugin
 #from gi.repository import Gtk
 import time
 

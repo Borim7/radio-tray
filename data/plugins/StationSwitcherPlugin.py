@@ -19,7 +19,7 @@
 ##########################################################################
 
 # author Mark F  Jan 2013
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
 from gi.repository import Gtk
 import random
 

@@ -19,13 +19,14 @@
 ##########################################################################
 
 
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
+from radiotray.lib.common import APP_ICON, APPNAME
+from radiotray.events.EventManager import EventManager
+
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Notify
 from gi.repository import GdkPixbuf
-from lib.common import APP_ICON, APPNAME
-from events.EventManager import EventManager
 
 class NotificationPlugin(Plugin):
 
