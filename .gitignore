@@ -1,0 +1,14 @@
+*.pyc
+*.pyo
+*~
+build/*
+dist/*
+*.pot
+MANIFEST
+.debhelper
+debian/files
+debian/radiotray*
+debian/debhelper-build-stamp
+*.egg-info
+.pybuild
+
