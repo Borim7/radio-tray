@@ -1,5 +1,5 @@
 ##########################################################################
-# Copyright 2014 Matthias Hofmann
+# Copyright 2009 Carlos Ribeiro
 #
 # This file is part of Radio Tray
 #
@@ -17,21 +17,24 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from radiotray.events.EventSubscriber import EventSubscriber
-from radiotray.events.EventManager import EventManager
-from radiotray.Plugin import Plugin
-#from gi.repository import Gtk
-import time
 
-class AutoPlayPlugin(Plugin):
 
-    def __init__(self):
-        super(AutoPlayPlugin, self).__init__()
+class EventSubscriber:
 
-    def activate(self):
-        self.mediator.playLast()
+    def __init__(self, eventManager):
+    
+        self.eventManager = eventManager
 
-    def on_menu(self, data):
-        # empty method needed to avoid crash, Plugin class does not provide a default
-        return
-
+    def bind(self, event, callback):
+    
+        observersList = self.eventManager.getObserversMap()[event]
+        observersList.append(callback)
+        
+        
+    def unbind(self, event, observer):
+    
+        observersList = self.eventManager.getObserversMap()[event]
+        try:
+            observersList.remove(observer)
+        except:
+            print("no observer in list")

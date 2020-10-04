@@ -19,7 +19,7 @@
 ##########################################################################
 
 # author Mark F  Jan 2013
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
 from gi.repository import Gtk
 import random
 
@@ -111,5 +111,5 @@ class StationSwitcherPlugin(Plugin):
     
     def on_menu(self, data):
         #plugin config gui goes here.  Need to add option for random station select
-        print ""
+        print("")
 

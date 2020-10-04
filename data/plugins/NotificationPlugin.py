@@ -19,13 +19,14 @@
 ##########################################################################
 
 
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
+from radiotray.lib.common import APP_ICON, APPNAME
+from radiotray.events.EventManager import EventManager
+
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Notify
 from gi.repository import GdkPixbuf
-from lib.common import APP_ICON, APPNAME
-from events.EventManager import EventManager
 
 class NotificationPlugin(Plugin):
 
@@ -79,15 +80,15 @@ class NotificationPlugin(Plugin):
 
     def set_icon(self, data):
         #some radios publish cover data in the 'homepage' tag
-        if('icon' in data.keys()):
+        if('icon' in list(data.keys())):
 
             try:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(data['icon'], 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
-            except Exception, e:
+            except Exception as e:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
                 self.notif.set_icon_from_pixbuf(pixbuf)
-                print e
+                print(e)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(APP_ICON, 48, 48)
             self.notif.set_icon_from_pixbuf(pixbuf)

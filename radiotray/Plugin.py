@@ -18,14 +18,16 @@
 #
 ##########################################################################
 
-from radiotray.Plugin import Plugin
-import dbus
+import threading
+from gi.repository import Gtk
+import logging
 
-class MateMediaKeysPlugin(Plugin):
+# This class should be extended by plugins implementations
+class Plugin(threading.Thread):
 
     def __init__(self):
-        super(MateMediaKeysPlugin, self).__init__()
-
+        threading.Thread.__init__(self)
+        self.log = logging.getLogger('radiotray')
 
     def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider, mediator, tooltip):
     
@@ -36,6 +38,9 @@ class MateMediaKeysPlugin(Plugin):
         self.cfgProvider = cfgProvider
         self.mediator = mediator
         self.tooltip = tooltip
+        self.menuItem = Gtk.MenuItem(self.getName())
+        self.menuItem.connect('activate', self.on_menu)
+        self.menuItem.show()
 
 
     def getName(self):
@@ -43,22 +48,20 @@ class MateMediaKeysPlugin(Plugin):
 
 
     def activate(self):
-        try:
-            self.bus = dbus.SessionBus()
-            self.bus_object = self.bus.get_object('org.mate.SettingsDaemon', '/org/mate/SettingsDaemon/MediaKeys')
-            self.bus_object.GrabMediaPlayerKeys("RadioTray", 0, dbus_interface='org.mate.SettingsDaemon.MediaKeys')
-            self.bus_object.connect_to_signal('MediaPlayerKeyPressed', self.handle_mediakey)
-        except:
-            print("Could not bind to mate for Media Keys")
-            
-            
-    def handle_mediakey(self, *mmkeys):
-        for key in mmkeys:
-            if key == "Play":
-                if (self.mediator.isPlaying()):
-                    self.mediator.stop()
-                else:
-                    self.mediator.playLast()
-            elif key == "Stop":
-                if (self.mediator.isPlaying()):
-                    self.mediator.stop()
+        raise NotImplementedError( "Subclasses should override this" )
+
+    def finalize(self):
+        print("Finalizing " + self.name)
+        self.join()
+
+    def setMenuItem(self, item):
+        self.menuItem = item
+
+    def getMenuItem(self):
+        return self.menuItem
+
+    def hasMenuItem(self):
+        return False
+
+    def run(self):
+        self.activate()

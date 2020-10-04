@@ -17,12 +17,12 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from events.EventSubscriber import EventSubscriber
-from events.EventManager import EventManager
-from Plugin import Plugin
+from radiotray.events.EventSubscriber import EventSubscriber
+from radiotray.events.EventManager import EventManager
+from radiotray.Plugin import Plugin
+from radiotray.lib import utils
+from radiotray.lib.common import SYSTEM_PLUGIN_PATH, USER_PLUGIN_PATH
 from gi.repository import Gtk
-from lib import utils
-from lib.common import SYSTEM_PLUGIN_PATH, USER_PLUGIN_PATH
 import os
 
 class HistoryPlugin(Plugin):
@@ -57,7 +57,7 @@ class HistoryPlugin(Plugin):
 
     def on_song_changed(self, data):
 
-        if('title' in data.keys()):
+        if('title' in list(data.keys())):
             title = data['title']
             if title != self.last_title:
                 self.last_title = title

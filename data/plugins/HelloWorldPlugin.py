@@ -17,9 +17,9 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from events.EventSubscriber import EventSubscriber
-from events.EventManager import EventManager
-from Plugin import Plugin
+from radiotray.events.EventSubscriber import EventSubscriber
+from radiotray.events.EventManager import EventManager
+from radiotray.Plugin import Plugin
 from gi.repository import Gtk
 import time
 
@@ -29,7 +29,7 @@ class HelloWorldPlugin(Plugin):
     def __init__(self):
         super(HelloWorldPlugin, self).__init__()
         
-        print "started"
+        print("started")
         
 
     def getName(self):
@@ -45,11 +45,11 @@ class HelloWorldPlugin(Plugin):
         return "Hello"
 
     def on_song_changed(self, data):
-        print "song changed"
-        print data
+        print("song changed")
+        print(data)
 
     def on_menu(self, data):
-        print "menu clicked!"
+        print("menu clicked!")
         self.eventManagerWrapper.notify('teste', 'testing 1 2 3')
 
 

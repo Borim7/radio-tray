@@ -18,7 +18,7 @@
 #
 ##########################################################################
 
-from Plugin import Plugin
+from radiotray.Plugin import Plugin
 import dbus
 
 class GnomeMediaKeysPlugin(Plugin):
@@ -49,7 +49,7 @@ class GnomeMediaKeysPlugin(Plugin):
             self.bus_object.GrabMediaPlayerKeys("RadioTray", 0, dbus_interface='org.gnome.SettingsDaemon.MediaKeys')
             self.bus_object.connect_to_signal('MediaPlayerKeyPressed', self.handle_mediakey)
         except:
-            print "Could not bind to Gnome for Media Keys"
+            print("Could not bind to Gnome for Media Keys")
             
             
     def handle_mediakey(self, *mmkeys):

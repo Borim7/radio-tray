@@ -1,5 +1,5 @@
 ##########################################################################
-# Copyright 2014 Matthias Hofmann
+# Copyright 2009 Carlos Ribeiro
 #
 # This file is part of Radio Tray
 #
@@ -17,21 +17,18 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from radiotray.events.EventSubscriber import EventSubscriber
-from radiotray.events.EventManager import EventManager
-from radiotray.Plugin import Plugin
-#from gi.repository import Gtk
-import time
 
-class AutoPlayPlugin(Plugin):
+from . import EventManager
 
-    def __init__(self):
-        super(AutoPlayPlugin, self).__init__()
+class EventMngNotificationWrapper:
 
-    def activate(self):
-        self.mediator.playLast()
+    def __init__(self, eventManager):
+        self.eventManager = eventManager
 
-    def on_menu(self, data):
-        # empty method needed to avoid crash, Plugin class does not provide a default
-        return
 
+
+    def notify(self, title, message):
+        self.eventManager.notify(self.eventManager.NOTIFICATION, {'title': title, 'message':message})
+
+    def notify_icon(self, title, message, icon):
+        self.eventManager.notify(self.eventManager.NOTIFICATION, {'title': title, 'message':message, 'icon':icon})
