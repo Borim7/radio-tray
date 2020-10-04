@@ -1,4 +1,4 @@
-RadioTray 0.7.3
+RadioTray 0.8.0
 ===============
 
 This is a simple music streaming player that lives on the system tray. By clicking on the RadioTray icon, 
@@ -14,9 +14,10 @@ This version allows you to add direct URLs (to media streams or files) and URLs 
 
 RadioTray was written in Python and uses gtk and gstreamer libraries (you'll need these to run RadioTray).
 
-To run RadioTray, you should run ./radiotray from the extracted tarball.
-
 To install, you can run "python setup.py install". Note: there is no uninstall script.
+Alternative you can build a debian package by running build.sh, the package will be generated under dist.
+
+You need to install RadioTray. To run RadioTray, you should execute 'bin/radiotray' or 'python3 -m radiotray' from the extracted tarball.
 
 
 Authors & Acknowlegements
