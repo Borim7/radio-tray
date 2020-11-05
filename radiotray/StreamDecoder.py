@@ -17,9 +17,7 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib.request, urllib.error, urllib.parse
-from .lib.common import USER_AGENT
-from .lib.DummyMMSHandler import DummyMMSHandler
+from .lib.common import getDefaultHttpHeader
 from .PlsPlaylistDecoder import PlsPlaylistDecoder
 from .M3uPlaylistDecoder import M3uPlaylistDecoder
 from .AsxPlaylistDecoder import AsxPlaylistDecoder
@@ -28,6 +26,7 @@ from .AsfPlaylistDecoder import AsfPlaylistDecoder
 from .RamPlaylistDecoder import RamPlaylistDecoder
 from .UrlInfo import UrlInfo
 import logging
+import requests
 
 class StreamDecoder:
 
@@ -66,48 +65,40 @@ class StreamDecoder:
             return UrlInfo(url, False, None)
 
         self.log.info('Requesting stream... %s', url)
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
 
+        # load first 500 bytes
         try:
-            opener = urllib.request.build_opener(DummyMMSHandler())
-            f = opener.open(req, timeout=float(self.url_timeout))
+            resp = requests.get(url, stream=True, timeout=float(self.url_timeout), headers=getDefaultHttpHeader())
 
-        except urllib.error.HTTPError as e:
+            metadata = resp.headers
+            firstbytes = next(resp.iter_content(500))
+
+        except response.HTTPError as e:
             self.log.warn('HTTP Error: No radio stream found for %s - %s', url, str(e))
             return None
-        except urllib.error.URLError as e:
+        except response.ConnectionError as e:
             self.log.info('No radio stream found for %s', url)
-            if str(e.reason).startswith('MMS REDIRECT'):
-                newurl = e.reason.split("MMS REDIRECT:",1)[1]
-                self.log.info('Found mms redirect for: %s', newurl)
-                return UrlInfo(newurl, False, None)
-            else:
-                return None
+            return None
         except Exception as e:
             self.log.warn('No radio stream found. Error: %s', str(e))
             return None
-
-        metadata = f.info()
-        firstbytes = f.read(500)
-        f.close()
+        finally:
+            resp.close()
         
+        # detect stream type
         try:            
             self.log.debug('Metadata obtained...')
             contentType = metadata["Content-Type"]
             self.log.info('Content-Type: %s', contentType)
             
-
         except Exception as e:
             self.log.info("Couldn't read content-type. Maybe direct stream...")
             self.log.info('Error: %s',e)
             return UrlInfo(url, False, None)
 
-        for decoder in self.decoders:
-                
+        for decoder in self.decoders:  
             self.log.info('Checking decoder')
             if(decoder.isStreamValid(contentType, firstbytes)):
-
                 return UrlInfo(url, True, contentType, decoder)
             
         # no playlist decoder found. Maybe a direct stream
@@ -117,6 +108,5 @@ class StreamDecoder:
 
 
     def getPlaylist(self, urlInfo):
-
         return urlInfo.getDecoder().extractPlaylist(urlInfo.getUrl())
 

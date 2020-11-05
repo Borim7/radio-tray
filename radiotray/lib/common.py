@@ -96,3 +96,7 @@ try:
                                                 platform.linux_distribution()[2])
 except:
     USER_AGENT = "RadioTray/" + APPVERSION
+
+
+def getDefaultHttpHeader():
+    return {"User-Agent": USER_AGENT}

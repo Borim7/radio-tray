@@ -17,12 +17,11 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib.request, urllib.error, urllib.parse
 from lxml import etree
-from lxml import objectify
 from io import StringIO
-from .lib.common import USER_AGENT
+from .lib.common import getDefaultHttpHeader
 import logging
+import requests
 
 class XspfPlaylistDecoder:
 
@@ -45,17 +44,13 @@ class XspfPlaylistDecoder:
 
         self.log.info('Downloading playlist...')
 
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        f = urllib.request.urlopen(req)
-        str = f.read()
-        f.close()
+        resp = requests.get(url, headers=getDefaultHttpHeader())
 
         self.log.info('Playlist downloaded')
         self.log.info('Decoding playlist...')
 
         parser = etree.XMLParser(recover=True)
-        root = etree.parse(StringIO(str),parser)
+        root = etree.parse(StringIO(resp.text),parser)
 
         elements = root.xpath("//xspf:track/xspf:location",namespaces={'xspf':'http://xspf.org/ns/0/'})
 

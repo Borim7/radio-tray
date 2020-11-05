@@ -19,10 +19,10 @@
 ##########################################################################
 from .lib.common import APPNAME
 from .events.EventMngNotificationWrapper import EventMngNotificationWrapper
-import urllib.request, urllib.error, urllib.parse
-from .lib.common import USER_AGENT, ICON_FILE
+from .lib.common import getDefaultHttpHeader, ICON_FILE
 import logging
 import traceback
+import requests
 
 class NotificationManager(object):
 
@@ -63,13 +63,11 @@ class NotificationManager(object):
         if('homepage' in list(data.keys()) and (data['homepage'].endswith('png') or data['homepage'].endswith('jpg'))):
             #download image
             try:
-                req = urllib.request.Request(data['homepage'])
-                req.add_header('User-Agent', USER_AGENT)
-                response = urllib.request.urlopen(req)
-                pix = response.read()
+                resp = requests.get(data['homepage'], headers=getDefaultHttpHeader())
+                
                 f = open(ICON_FILE,'wb')
                 try:
-                    f.write(pix)
+                    f.write(resp.content)
                 except Exception as e:
                     self.log.warn('Error saving icon')
                 finally:

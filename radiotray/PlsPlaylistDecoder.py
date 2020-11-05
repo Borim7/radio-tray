@@ -17,9 +17,9 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib.request, urllib.error, urllib.parse
-from radiotray.lib.common import USER_AGENT
+from .lib.common import getDefaultHttpHeader
 import logging
+import requests
 
 class PlsPlaylistDecoder:
 
@@ -42,23 +42,19 @@ class PlsPlaylistDecoder:
             
             self.log.info('Downloading playlist...')
             
-            req = urllib.request.Request(url)
-            req.add_header('User-Agent', USER_AGENT)
-            f = urllib.request.urlopen(req)
-            str = f.read()
-            f.close()
+            resp = requests.get(url, headers=getDefaultHttpHeader())
             
             self.log.info('Playlist downloaded')
             self.log.info('Decoding playlist...')
             
             playlist = []
-            lines = str.splitlines()
+            lines = resp.text.splitlines()
             for line in lines:
 
                 if line.startswith("File") == True:
 
-                        list = line.split("=", 1)
-                        playlist.append(list[1])
+                        fields = line.split("=", 1)
+                        playlist.append(fields[1])
       
             
             return playlist

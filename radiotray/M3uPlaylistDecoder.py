@@ -17,9 +17,9 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib.request, urllib.error, urllib.parse
-from .lib.common import USER_AGENT
+from .lib.common import getDefaultHttpHeader
 import logging
+import requests
 
 class M3uPlaylistDecoder:
 
@@ -44,16 +44,12 @@ class M3uPlaylistDecoder:
     def extractPlaylist(self,  url):
         self.log.info('Downloading playlist...')
 
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        f = urllib.request.urlopen(req)
-        str = f.read()
-        f.close()
+        resp = requests.get(url, headers=getDefaultHttpHeader())
 
         self.log.info('Playlist downloaded')
         self.log.info('Decoding playlist...')
 
-        lines = str.splitlines()
+        lines = resp.text.splitlines()
         playlist = []
 
         for line in lines:
