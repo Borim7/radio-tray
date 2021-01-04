@@ -25,7 +25,7 @@ try:
 except:
     pass
 try:
-    from gi.repository import Gtk
+    from gi.repository import Gtk, GLib
     from gi.repository import GObject
     GObject.threads_init()
     from gi.repository import Gst
@@ -36,7 +36,6 @@ except Exception as e:
 from .StreamDecoder import StreamDecoder
 from .lib.common import USER_AGENT
 from .events.EventManager import EventManager
-from threading import Timer
 import logging
 
 class AudioPlayerGStreamer:
@@ -181,8 +180,7 @@ class AudioPlayerGStreamer:
                 
                 if self.retrying == False:
                     self.retrying = True
-                    timer = Timer(20.0, self.checkTimeout)
-                    timer.start()
+                    GLib.timeout_add(20000, self.checkTimeout, None)
                     self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'paused'})
                     
             
@@ -224,7 +222,7 @@ class AudioPlayerGStreamer:
         return True
 
 
-    def checkTimeout(self):
+    def checkTimeout(self, data):
         self.log.debug("Checking timeout...")
         if self.retrying == True:
             self.log.info("Timed out. Retrying...")
@@ -232,3 +230,6 @@ class AudioPlayerGStreamer:
             self.playStream(uri)
         else: 
             self.log.info("Timed out, but not retrying anymore")
+        
+        # no need to repeat timeout checks
+        return False
