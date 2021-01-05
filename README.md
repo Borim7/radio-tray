@@ -20,13 +20,13 @@ To install, you can run `python setup.py install`. Note: there is no uninstall s
 Alternative you can build a debian package by running `build.sh`, the package will be generated under dist.
 For signed debian package use `build.sh --sign`
 
-You need to install RadioTray. To run RadioTray, you should execute 'bin/radiotray' or 'python3 -m radiotray' from the extracted tarball.
+You need to install RadioTray. To run RadioTray, you should execute `bin/radiotray` or `python3 -m radiotray` from the extracted tarball.
 
 
 # Authors & Acknowlegements
 
-RadioTray was written by Carlos Ribeiro <carlosmribeiro1@gmail.com>. RadioTray is Copyright (c) 2009, 
-2010 by Carlos Ribeiro <carlosmribeiro1@gmail.com>; it is distributed under the GNU General Public 
+RadioTray was written by Carlos Ribeiro <carlosmribeiro1@gmail.com>. RadioTray is Copyright (c) 2009,
+2010 by Carlos Ribeiro <carlosmribeiro1@gmail.com>; it is distributed under the GNU General Public
 License, see COPYING for details.
 
 Radio Tray icon is a GPL icon made by WooThemes

@@ -1,8 +1,9 @@
 radiotray (0.8.0) unstable; urgency=low
 
   * Switch to python 3
+  * Fix delayed program termination
 
- -- Matthias <borim7@web.de>  Sat, 26 Sep 2020 21:32:16 +0200
+ -- Matthias <borim7@web.de>  Tue, 05 Jan 2021 19:05:07 +0100
 
 radiotray (0.7.3) unstable; urgency=low
 
