@@ -19,13 +19,8 @@
 ##########################################################################
 try:
     import gi
-    pyGtk.require("2.1")
+    gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
-except:
-    pass
-try:
-    from gi.repository import Gtk
-    #import Gtk.glade
 except Exception as e:
     print(e)
     sys.exit(1)
