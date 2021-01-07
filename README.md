@@ -20,6 +20,14 @@ To install, you can run `python setup.py install`. Note: there is no uninstall s
 Alternative you can build a debian package by running `build.sh`, the package will be generated under dist.
 For signed debian package use `build.sh --sign`
 
+For prebuild packages you can use following PPA:
+- https://launchpad.net/~borim/+archive/ubuntu/radiotray
+
+It can be added to your package respositories with the command:
+```
+sudo add-apt-repository ppa:borim/radiotray
+```
+
 You need to install RadioTray. To run RadioTray, you should execute `bin/radiotray` or `python3 -m radiotray` from the extracted tarball.
 
 
