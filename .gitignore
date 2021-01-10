@@ -11,4 +11,6 @@ debian/radiotray*
 debian/debhelper-build-stamp
 *.egg-info
 .pybuild
+doc
+ppa
 

@@ -6,7 +6,9 @@ Build-Depends: cdbs (>= 0.4.43),
  python3,
  python3-setuptools,
  python3-distutils-extra (>= 2.10),
- dh-python
+ dh-python,
+ python3-dbus,
+ python3-xdg
 Maintainer: Carlos Ribeiro <carlosmribeiro1@gmail.com>
 Standards-Version: 3.8.2
 XS-Python-Version: current
@@ -19,6 +21,8 @@ Depends: ${python3:Depends},
  python3-gst-1.0,
  python3-gi,
  python3-lxml,
- python3-dbus
+ python3-dbus,
+ python3-xdg,
+ gir1.2-appindicator3-0.1
 Description: Radio Tray is an online radio stream player
  Radio Tray is a simple streaming music player
