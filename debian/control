@@ -22,6 +22,7 @@ Depends: ${python3:Depends},
  python3-gi,
  python3-lxml,
  python3-dbus,
- python3-xdg
+ python3-xdg,
+ gir1.2-appindicator3-0.1
 Description: Radio Tray is an online radio stream player
  Radio Tray is a simple streaming music player

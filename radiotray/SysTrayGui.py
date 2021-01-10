@@ -107,7 +107,10 @@ class SysTrayGui:
                         
         self.menu.show_all()
 
-        self.icon = Gtk.status_icon_new_from_file(APP_ICON_OFF)
+        # TODO StatusIcon is deprecated so this class is a candidate for removal
+        self.icon = Gtk.StatusIcon()
+        self.icon.set_from_file(APP_ICON_OFF)
+
         self.icon.set_tooltip_markup(_("Idle (vol: %s%%)") % (self.mediator.getVolume()))
         self.icon.connect('button_press_event', self.button_press)
         self.icon.connect('scroll_event', self.handler.scroll)
