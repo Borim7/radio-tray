@@ -14,5 +14,5 @@ python3 setup.py bdist
 
 dpkg-buildpackage -b -rfakeroot $SIGN_OPTION
 
-mv ../radiotray_0.8.0_{all.deb,*.changes,*.buildinfo} dist
+mv ../radiotray_0.8.1_{all.deb,*.changes,*.buildinfo} dist
 

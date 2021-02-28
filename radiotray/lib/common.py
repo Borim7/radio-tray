@@ -7,7 +7,7 @@ from xdg.BaseDirectory import xdg_data_home
 try:
     from defs import *
 except:
-    APPVERSION = "0.8.0"
+    APPVERSION = "0.8.1"
     if os.uname()[0] == 'OpenBSD':
         datadir = "/usr/local/share"
     else:
