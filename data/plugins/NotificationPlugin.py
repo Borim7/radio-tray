@@ -67,18 +67,27 @@ class NotificationPlugin(Plugin):
             if self.notif == None:
         
                 if Notify.init(APPNAME):
-                    self.notif = Notify.Notification.new(title, message, None)
-                    self.notif.set_urgency(Notify.Urgency.LOW)
-                    self.set_icon(data)
-                    self.notif.set_timeout(Notify.EXPIRES_DEFAULT)
-                    self.notif.show()
+                    try:
+                        self.notif = Notify.Notification.new(title, message, None)
+                        self.notif.set_urgency(Notify.Urgency.LOW)
+                        self.set_icon(data)
+                        self.notif.set_timeout(Notify.EXPIRES_DEFAULT)
+                        self.notif.show()
+                    except:
+                        # probably dbus is not responding, e.g. during shutdown, ignore error
+                        self.log.error('Error: notification can not be displayed, after initialization')
+
                 else:
                     self.log.error('Error: there was a problem initializing the pynotify module')
             
             else:
-                self.set_icon(data)
-                self.notif.update(title, message, None)
-                self.notif.show()
+                try:
+                    self.set_icon(data)
+                    self.notif.update(title, message, None)
+                    self.notif.show()
+                except:
+                    # probably dbus is not responding, e.g. during shutdown, ignore error
+                    self.log.error('Error: notification can not be displayed')
 
 
     def set_icon(self, data):
