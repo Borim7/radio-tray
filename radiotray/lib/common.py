@@ -20,7 +20,7 @@ APPDIRNAME = APPNAME.lower().replace(" ","")
 COPYRIGHT_YEAR = '2009 - 2011'
 COPYRIGHTS = "%s - Copyright (c) %s\n" \
              "Carlos Ribeiro <carlosmribeiro1@gmail.com>" % (APPNAME, COPYRIGHT_YEAR)
-WEBSITE = "http://radiotray.sourceforge.net/"
+WEBSITE = "https://github.com/Borim7/radio-tray"
 AUTHORS = [
     _('Developers:'),
     "Carlos Ribeiro <carlosmribeiro1@gmail.com>",

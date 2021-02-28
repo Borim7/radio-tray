@@ -1,6 +1,12 @@
-Radio Tray 0.8.0
+Radio Tray 0.8.1 - 28/02/2021
+=============================
+* Fix crash when dbus is not responding
+* Change website to github repository
+
+Radio Tray 0.8.0 - 10/01/2021
 =============================
 * Switch to python 3
+* Fix delayed program termination
 
 
 Radio Tray 0.7.3 - 09/08/2012
