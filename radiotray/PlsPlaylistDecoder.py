@@ -17,46 +17,44 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .lib.common import getDefaultHttpHeader
 import logging
 import requests
+from .lib.common import getDefaultHttpHeader
+
 
 class PlsPlaylistDecoder:
 
     def __init__(self):
         self.log = logging.getLogger('radiotray')
         self.log.debug('PLS playlist decoder')
-        
+
 
     def isStreamValid(self, contentType, firstBytes):
 
-        if(('audio/x-scpls' in contentType) or ('application/pls+xml' in contentType) or (firstBytes.strip().lower().startswith(b'[playlist]'))):
+        if(('audio/x-scpls' in contentType) or ('application/pls+xml' in contentType) or
+            (firstBytes.strip().lower().startswith(b'[playlist]'))):
+
             self.log.info('Stream is readable by PLS Playlist Decoder')
             return True
-        else:
-            return False
 
+        return False
 
 
     def extractPlaylist(self,  url):
-            
-            self.log.info('Downloading playlist...')
-            
-            resp = requests.get(url, headers=getDefaultHttpHeader())
-            
-            self.log.info('Playlist downloaded')
-            self.log.info('Decoding playlist...')
-            
-            playlist = []
-            lines = resp.text.splitlines()
-            for line in lines:
 
-                if line.startswith("File") == True:
+        self.log.info('Downloading playlist...')
 
-                        fields = line.split("=", 1)
-                        playlist.append(fields[1])
-      
-            
-            return playlist
-            
-            
+        resp = requests.get(url, headers=getDefaultHttpHeader())
+
+        self.log.info('Playlist downloaded')
+        self.log.info('Decoding playlist...')
+
+        playlist = []
+        lines = resp.text.splitlines()
+        for line in lines:
+            if line.startswith("File"):
+                fields = line.split("=", 1)
+                playlist.append(fields[1])
+
+
+        return playlist

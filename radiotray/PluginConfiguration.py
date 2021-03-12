@@ -17,29 +17,30 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import sys
+import logging
 
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except:
+except ImportError:
     pass
 try:
     from gi.repository import Gtk
     #import Gtk.glade
     from gi.repository import GObject
     GObject.threads_init()
-    import os
-    from .lib import utils
-    from .lib.common import APP_ICON_ON
-except Exception as e:
-    print(e)
-import logging
 
-class PluginConfiguration(object):
+except ImportError as e:
+    print(e)
+
+from .lib import utils
+from .lib.common import APP_ICON_ON
+
+
+class PluginConfiguration:
 
     def __init__(self, pluginManager, cfgProvider):
-        
+
         self.pluginManager = pluginManager
         self.cfgProvider = cfgProvider
         self.log = logging.getLogger('radiotray')
@@ -49,7 +50,7 @@ class PluginConfiguration(object):
         self.wTree = gladefile
         self.window = self.wTree.get_object("dialog1")
         self.list = self.wTree.get_object("treeview1")
-        
+
         # set icon
         self.window.set_icon_from_file(APP_ICON_ON)
 
@@ -74,7 +75,7 @@ class PluginConfiguration(object):
         self.list.append_column(tvcolumn1)
         self.list.append_column(tvcolumn2)
 
-        if (self.window):
+        if self.window:
             dic = { "on_close_clicked" : self.on_close_clicked}
             self.wTree.connect_signals(self)
 
@@ -83,7 +84,7 @@ class PluginConfiguration(object):
 
 
     def load_data(self):
-        
+
         self.activePlugins = self.cfgProvider.getConfigList('active_plugins')
 #        if plugins == None:
 #            self.cfgProvider.setConfigValue('active_plugins'
@@ -91,7 +92,7 @@ class PluginConfiguration(object):
 
         liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, GObject.TYPE_STRING)
         plugins = self.pluginManager.getPlugins()
-  
+
         for p in plugins:
             if p.name in self.activePlugins:
                 liststore.append([True, p.name])
@@ -103,13 +104,13 @@ class PluginConfiguration(object):
 
 
     def on_toggle(self, cell, path, model):
-        
+
         model[path][0] = not model[path][0]
         name = model[path][1]
 
-        self.log.debug('Setting ' + model[path][1] + ' to ' + str(model[path][0]))
+        self.log.debug('Setting %s to %s', model[path][1], str(model[path][0]))
         self.log.debug(self.activePlugins)
-        if(model[path][0] == True):
+        if model[path][0]:
             self.log.debug('apppend %s', name)
             self.activePlugins.append(name)
             self.pluginManager.activatePlugin(name)
@@ -118,7 +119,7 @@ class PluginConfiguration(object):
             self.activePlugins.remove(name)
             self.pluginManager.deactivatePlugin(name)
 
-        
+
         self.log.debug(self.activePlugins)
 
 
@@ -126,4 +127,3 @@ class PluginConfiguration(object):
 
         self.cfgProvider.setConfigList('active_plugins', self.activePlugins)
         self.window.destroy()
-

@@ -17,9 +17,10 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .lib.common import getDefaultHttpHeader
 import logging
 import requests
+from .lib.common import getDefaultHttpHeader
+
 
 class M3uPlaylistDecoder:
 
@@ -35,7 +36,7 @@ class M3uPlaylistDecoder:
         else:
             lines = firstBytes.splitlines()
             for line in lines:
-                if(line.startswith(b"http://")):
+                if line.startswith(b"http://"):
                     return True
         return False
 
@@ -53,7 +54,7 @@ class M3uPlaylistDecoder:
         playlist = []
 
         for line in lines:
-            if line.startswith("#") == False and len(line) > 0:
+            if not line.startswith("#") and len(line) > 0:
                 playlist.append(line)
 
         return playlist

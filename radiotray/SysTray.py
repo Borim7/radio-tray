@@ -17,8 +17,8 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import sys,os
-import time
+import sys
+import logging
 try:
     import gi
     gi.require_version("Gtk", "3.0")
@@ -26,34 +26,20 @@ try:
     from gi.repository import Gdk
 except Exception as e:
     print(e)
-    pass
-#try:
-    #from gi.repository import Gtk
-    #import Gtk.glade
-#except Exception as e:
-#    print e
-#    sys.exit(1)
+    sys.exit(1)
 
-from .AudioPlayerGStreamer import AudioPlayerGStreamer
-from .XmlDataProvider import XmlDataProvider
 from .BookmarkConfiguration import BookmarkConfiguration
 from .PluginConfiguration import PluginConfiguration
-from .lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
-from .lib import i18n
+from .lib.common import APPVERSION
 from .about import AboutDialog
-from .lib.utils import html_escape
 from .GuiChooserConfiguration import GuiChooserConfiguration
 from .events.EventManager import EventManager
 from .SysTrayGui import SysTrayGui
 from .AppIndicatorGui import AppIndicatorGui
-from .TooltipManager import TooltipManager
 from .Context import Context
 
-import dbus
-import textwrap
-import logging
 
-class AboutWindow(object):
+class AboutWindow:
     def __init__(self, dialog_class):
         self.dialog = None
         self.dialog_class = dialog_class
@@ -78,9 +64,10 @@ def about_dialog(parent=None):
 
 
 
-class SysTray(object):
+class SysTray:
 
-    def __init__(self, mediator, provider, cfg_provider, default_cfg_provider, eventManager, tooltipManager):
+    def __init__(self, mediator, provider, cfg_provider, default_cfg_provider, eventManager,
+        tooltipManager):
 
         self.version = APPVERSION
         self.mediator = mediator
@@ -91,8 +78,7 @@ class SysTray(object):
         self.provider = provider
         self.cfg_provider = cfg_provider
         self.tooltip = tooltipManager
-        
-            
+
         self.ignore_toggle = False
 
         # execute gui chooser
@@ -100,17 +86,17 @@ class SysTray(object):
             gi.require_version('AppIndicator3', '0.1')
             from gi.repository import AppIndicator3
             self.gui_engine = self.cfg_provider.getConfigValue("gui_engine")
-            if(self.gui_engine == None):
+            if self.gui_engine is None:
                 self.gui_engine = default_cfg_provider.getConfigValue("gui_engine")
- 
-            if(self.gui_engine == None or self.gui_engine == "chooser"):
+
+            if self.gui_engine is None or self.gui_engine == "chooser":
                 self.log.debug('show chooser')
                 chooser = GuiChooserConfiguration()
                 self.gui_engine = chooser.run()
 
             self.cfg_provider.setConfigValue("gui_engine", self.gui_engine)
 
-        except Exception as e:
+        except Exception:
             self.log.debug('No appindicator support found. Choosing notification area...')
             self.gui_engine = "systray"
 
@@ -122,34 +108,35 @@ class SysTray(object):
             self.app_indicator_enabled = False
             self.cfg_provider.setConfigValue("enable_application_indicator_support", "false")
 
-        if(self.app_indicator_enabled):
+        if self.app_indicator_enabled:
             self.log.debug('App Indicator selected')
             self.gui = AppIndicatorGui(self, self.mediator, self.cfg_provider, self.provider)
-  
+
         else:
             self.log.debug('Systray selected')
             self.gui = SysTrayGui(self, self.mediator, self.cfg_provider, self.provider)
-        
+
         self.tooltip.setGui(self.gui)
         self.tooltip.addSource(self.gui.getCommonTooltipData)
 
         self.gui.buildMenu()
-        
-            
+
+
 ###### Action Events #######
 
     def scroll(self,widget, event):
         if event.direction == Gdk.ScrollDirection.UP:
             self.mediator.volume_up()
-            
+
         if event.direction == Gdk.ScrollDirection.DOWN:
             self.mediator.volume_down()
+
     def volume_up(self, menu_item):
         self.mediator.volume_up()
+
     def volume_down(self, menu_item):
         self.mediator.volume_down()
 
-    
 
     def on_preferences(self, data):
         config = BookmarkConfiguration(self.provider, self.update_radios)
@@ -170,35 +157,28 @@ class SysTray(object):
     def on_start(self, data, radio):
         self.mediator.context.resetSongInfo()
         self.mediator.play(radio)
-    
-        
+
+
     def updateTooltip(self):
         self.tooltip.update()
-    
-    
 
-        
 
     def update_radios(self):
         self.gui.update_radios()
-    
-        
+
+
     def run(self):
         Gdk.threads_init()
         Gdk.threads_enter()
         Gtk.main()
 
 
-    
-
-            
     def reload_bookmarks(self, data):
         self.provider.loadFromFile()
         self.update_radios()
         self.eventManager.notify(EventManager.BOOKMARKS_RELOADED, {})
-        
 
-    
+
     def on_state_changed(self, data):
 
         if(data['state'] == Context.STATE_PAUSED and self.mediator.context.station == Context.UNKNOWN_RADIO):
@@ -209,7 +189,7 @@ class SysTray(object):
 
     def on_volume_changed(self, volume):
         self.updateTooltip()
-      
+
     def on_song_changed(self, data):
         self.updateTooltip()
 
@@ -223,4 +203,3 @@ class SysTray(object):
 
     def setPluginManager(self, pluginManager):
         self.pluginManager = pluginManager
-        

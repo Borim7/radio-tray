@@ -26,7 +26,7 @@ from . import mpris_player
 
 OBJECT_NAME = 'org.mpris.radiotray'
 
-class RadioTrayMpris(object):
+class RadioTrayMpris:
 
     """
         Controller for various MPRIS objects.
@@ -40,4 +40,3 @@ class RadioTrayMpris(object):
         mpris_root.RadioTrayMprisRoot(mediator, self.bus) # don't need provider
         mpris_player.RadioTrayMprisPlayer(provider, mediator, self.bus)
         mpris_tracklist.RadioTrayMprisTrackList(self.bus) # actually TrackList doesn't provide anything yet
-

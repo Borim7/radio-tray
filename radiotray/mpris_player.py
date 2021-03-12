@@ -4,7 +4,7 @@ import dbus.service
 
 INTERFACE_NAME = 'org.freedesktop.MediaPlayer'
 
-class MprisCaps(object):
+class MprisCaps:
     """
         Specification for the capabilities field in MPRIS
     """
@@ -17,7 +17,7 @@ class MprisCaps(object):
     CAN_PROVIDE_METADATA  = 0
     CAN_HAS_TRACKLIST     = 0
 
-Radiotray_CAPS = (MprisCaps.CAN_GO_NEXT
+RADIOTRAY_CAPS = (MprisCaps.CAN_GO_NEXT
                 | MprisCaps.CAN_GO_PREV
                 | MprisCaps.CAN_PAUSE
                 | MprisCaps.CAN_PLAY
@@ -105,7 +105,7 @@ class RadioTrayMprisPlayer(dbus.service.Object):
         #    playing = 1
         else:
             playing = 2
-        
+
         ## does it matter?
         random = 0
         ## Do not have ability to repeat single track
@@ -143,7 +143,7 @@ class RadioTrayMprisPlayer(dbus.service.Object):
         """
             Returns the "Media player"'s current capabilities, see MprisCaps
         """
-        return Radiotray_CAPS
+        return RADIOTRAY_CAPS
 
     @dbus.service.method(INTERFACE_NAME, in_signature="i")
     def VolumeSet(self, volume):
@@ -201,4 +201,3 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             GetCaps method.
         """
         pass
-

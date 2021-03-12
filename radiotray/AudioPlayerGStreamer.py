@@ -17,26 +17,27 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import sys, os
+import logging
+
 try:
     import gi
     gi.require_version("Gtk", "3.0")
     gi.require_version('Gst', '1.0')
-except:
+except ImportError:
     pass
 try:
-    from gi.repository import Gtk, GLib
+    from gi.repository import GLib
     from gi.repository import GObject
     GObject.threads_init()
     from gi.repository import Gst
     Gst.init(None)
-except Exception as e:
+except ImportError as e:
     print(e)
 
 from .StreamDecoder import StreamDecoder
 from .lib.common import USER_AGENT
 from .events.EventManager import EventManager
-import logging
+
 
 class AudioPlayerGStreamer:
 
@@ -53,21 +54,20 @@ class AudioPlayerGStreamer:
         self.log.debug("Initializing gstreamer...")
         self.souphttpsrc = Gst.ElementFactory.make("souphttpsrc", "source")
         self.souphttpsrc.set_property("user-agent", USER_AGENT)
-        
-        self.log.debug("Loading playbin...");
+
+        self.log.debug("Loading playbin...")
         self.player = Gst.ElementFactory.make("playbin", "player")
         fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
         self.player.set_property("video-sink", fakesink)
 
         #buffer size
-        if(cfg_provider._settingExists("buffer_size")):
+        if cfg_provider._settingExists("buffer_size"):
             bufferSize = int(cfg_provider.getConfigValue("buffer_size"))
-            if (bufferSize > 0):
-            
-                self.log.debug("Setting buffer size to " + str(bufferSize))
+            if bufferSize > 0:
+                self.log.debug("Setting buffer size to %i", bufferSize)
                 self.player.set_property("buffer-size", bufferSize)
 
-        
+
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
@@ -78,36 +78,38 @@ class AudioPlayerGStreamer:
 
         urlInfo = self.decoder.getMediaStreamInfo(uri)
 
-        if(urlInfo is not None and urlInfo.isPlaylist()):
+        if urlInfo is not None and urlInfo.isPlaylist():
             self.playlist = self.decoder.getPlaylist(urlInfo)
-            if(len(self.playlist) == 0):
+            if len(self.playlist) == 0:
                 self.log.warn('Received empty playlist!')
                 self.mediator.stop()
-                self.eventManager.notify(EventManager.STATION_ERROR, {'error':"Received empty stream from station"})
+                self.eventManager.notify(EventManager.STATION_ERROR,
+                    {'error':"Received empty stream from station"})
             self.log.debug(self.playlist)
             self.playNextStream()
 
-        elif(urlInfo is not None and urlInfo.isPlaylist() == False):
+        elif urlInfo is not None and not urlInfo.isPlaylist():
             self.playlist = [urlInfo.getUrl()]
             self.playNextStream()
 
         else:
             self.stop()
-            self.eventManager.notify(EventManager.STATION_ERROR, {'error':"Couldn't connect to radio station"})
-            
+            self.eventManager.notify(EventManager.STATION_ERROR,
+                {'error':"Couldn't connect to radio station"})
+
 
     def playNextStream(self):
-        if(len(self.playlist) > 0):
+        if len(self.playlist) > 0:
             stream = self.playlist.pop(0)
             self.log.info('Play "%s"', stream)
 
             urlInfo = self.decoder.getMediaStreamInfo(stream)
-            if(urlInfo is not None and urlInfo.isPlaylist() == False):
+            if urlInfo is not None and not urlInfo.isPlaylist():
                 self.playStream(stream)
-            elif(urlInfo is not None and urlInfo.isPlaylist()):
+            elif urlInfo is not None and urlInfo.isPlaylist():
                 self.playlist = self.decoder.getPlaylist(urlInfo) + self.playlist
                 self.playNextStream()
-            elif(urlInfo is None):
+            elif urlInfo is None:
                 self.playNextStream()
         else:
             self.stop()
@@ -123,26 +125,28 @@ class AudioPlayerGStreamer:
         self.player.set_state(Gst.State.NULL)
         self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'paused'})
 
-    def volume_up(self, volume_increment):   
-        self.player.set_property("volume", min(self.player.get_property("volume") + volume_increment, 1.0))
+    def volume_up(self, volume_increment):
+        self.player.set_property("volume", min(self.player.get_property("volume") +
+            volume_increment, 1.0))
         self.mediator.updateVolume(self.player.get_property("volume"))
 
     def volume_down(self, volume_increment):
-        self.player.set_property("volume", max(self.player.get_property("volume") - volume_increment, 0.0))
+        self.player.set_property("volume", max(self.player.get_property("volume") -
+            volume_increment, 0.0))
         self.mediator.updateVolume(self.player.get_property("volume"))
 
     def on_message(self, bus, message):
         t = message.type
 
         stru = message.get_structure()
-        if(stru != None):
+        if stru is not None:
             name = stru.get_name()
-            if(name == 'redirect'):
+            if name == 'redirect':
                 self.log.info("redirect received")
                 self.player.set_state(Gst.State.NULL)
                 stru.foreach(self.redirect, None)
 
-                
+
 
         if t == Gst.MessageType.EOS:
             self.log.debug("Received MESSAGE_EOS")
@@ -151,7 +155,7 @@ class AudioPlayerGStreamer:
         elif t == Gst.MessageType.BUFFERING:
             percent = message.parse_buffering()
             if percent < 100:
-                self.log.debug("Buffering %s" % percent)
+                self.log.debug("Buffering %s", percent)
                 self.player.set_state(Gst.State.PAUSED)
             else:
                 self.player.set_state(Gst.State.PLAYING)
@@ -162,74 +166,75 @@ class AudioPlayerGStreamer:
             self.log.warn(err)
             self.log.warn(debug)
 
-            if(len(self.playlist)>0):
+            if len(self.playlist)>0:
                 self.playNextStream()
             else:
                 self.eventManager.notify(EventManager.STATION_ERROR, {'error':debug})
 
         elif t == Gst.MessageType.STATE_CHANGED:
-            oldstate, newstate, pending = message.parse_state_changed()
-            self.log.debug(("Received MESSAGE_STATE_CHANGED (%s -> %s)") % (oldstate, newstate))
+            oldstate, newstate, unused_pending = message.parse_state_changed()
+            self.log.debug(("Received MESSAGE_STATE_CHANGED (%s -> %s)"), oldstate, newstate)
 
             if newstate == Gst.State.PLAYING:
                 self.retrying = False
                 station = self.mediator.getContext().station
-                self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'playing', 'station':station})
+                self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'playing',
+                    'station':station})
             elif oldstate == Gst.State.PLAYING and newstate == Gst.State.PAUSED:
                 self.log.info("Received PAUSE state.")
-                
-                if self.retrying == False:
+
+                if not self.retrying:
                     self.retrying = True
                     GLib.timeout_add(20000, self.checkTimeout, None)
                     self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'paused'})
-                    
-            
+
+
 
         elif t == Gst.MessageType.TAG:
 
-           taglist = message.parse_tag()
+            taglist = message.parse_tag()
 
-           #for (tag, value) in taglist.items():
-           #    print "TT: " + tag + " - " + value
+            #for (tag, value) in taglist.items():
+            #    print "TT: " + tag + " - " + value
 
-           (present, value) = taglist.get_string('title')
+            (present, value) = taglist.get_string('title')
 
-           if present:
-               metadata = {}
-               station = self.mediator.getContext().station
-               metadata['title'] = value
-               metadata['station'] = station
+            if present:
+                metadata = {}
+                station = self.mediator.getContext().station
+                metadata['title'] = value
+                metadata['station'] = station
 
-               self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
+                self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
 
-           #if there is no song information, there's no point in triggering song change event
-           #if('artist' in taglist.keys() or 'title' in taglist.keys()):
-           #    station = self.mediator.getContext().station
-           #    metadata = {}
+            #if there is no song information, there's no point in triggering song change event
+            #if('artist' in taglist.keys() or 'title' in taglist.keys()):
+            #    station = self.mediator.getContext().station
+            #    metadata = {}
 
-           #    for key in taglist.keys():      
-           #        metadata[key] = taglist[key]
+            #    for key in taglist.keys():
+            #        metadata[key] = taglist[key]
 
-           #    metadata['station'] = station
-           
-           #    self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
+            #    metadata['station'] = station
+
+            #    self.eventManager.notify(EventManager.SONG_CHANGED, metadata)
 
         return True
 
     def redirect(self, name, value, data):
-        if(name == 'new-location'):
+        if name == 'new-location':
             self.start(value)
         return True
 
 
     def checkTimeout(self, data):
         self.log.debug("Checking timeout...")
-        if self.retrying == True:
+        if self.retrying:
             self.log.info("Timed out. Retrying...")
             uri = self.player.get_property("uri")
             self.playStream(uri)
-        else: 
+        else:
             self.log.info("Timed out, but not retrying anymore")
-        
+
         # no need to repeat timeout checks
         return False

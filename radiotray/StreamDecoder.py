@@ -17,6 +17,9 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
+import logging
+import requests
+
 from .lib.common import getDefaultHttpHeader
 from .PlsPlaylistDecoder import PlsPlaylistDecoder
 from .M3uPlaylistDecoder import M3uPlaylistDecoder
@@ -25,8 +28,7 @@ from .XspfPlaylistDecoder import XspfPlaylistDecoder
 from .AsfPlaylistDecoder import AsfPlaylistDecoder
 from .RamPlaylistDecoder import RamPlaylistDecoder
 from .UrlInfo import UrlInfo
-import logging
-import requests
+
 
 class StreamDecoder:
 
@@ -39,18 +41,18 @@ class StreamDecoder:
         ramDecoder = RamPlaylistDecoder()
 
         self.log = logging.getLogger('radiotray')
-        
+
         self.decoders = [plsDecoder, asxDecoder, asfDecoder, xspfDecoder, ramDecoder, m3uDecoder]
 
         self.url_timeout = None
 
         try:
             self.url_timeout = cfg_provider.getConfigValue("url_timeout")
-            if (self.url_timeout == None):
+            if self.url_timeout is None:
                 self.log.warn("Couldn't find url_timeout configuration")
                 self.url_timeout = 100
                 cfg_provider.setConfigValue("url_timeout", str(self.url_timeout))
-        except Exception as e:
+        except Exception:
             self.log.warn("Couldn't find url_timeout configuration")
             self.url_timeout = 100
             cfg_provider.setConfigValue("url_timeout", str(self.url_timeout))
@@ -60,7 +62,7 @@ class StreamDecoder:
 
     def getMediaStreamInfo(self, url):
 
-        if url.startswith("http") == False:
+        if not url.startswith("http"):
             self.log.info('Not an HTTP url. Maybe direct stream...')
             return UrlInfo(url, False, None)
 
@@ -68,15 +70,16 @@ class StreamDecoder:
 
         # load first 500 bytes
         try:
-            resp = requests.get(url, stream=True, timeout=float(self.url_timeout), headers=getDefaultHttpHeader())
+            resp = requests.get(url, stream=True, timeout=float(self.url_timeout),
+                headers=getDefaultHttpHeader())
 
             metadata = resp.headers
             firstbytes = next(resp.iter_content(500))
 
-        except response.HTTPError as e:
+        except requests.HTTPError as e:
             self.log.warn('HTTP Error: No radio stream found for %s - %s', url, str(e))
             return None
-        except response.ConnectionError as e:
+        except requests.ConnectionError as e:
             self.log.info('No radio stream found for %s', url)
             return None
         except Exception as e:
@@ -84,29 +87,28 @@ class StreamDecoder:
             return None
         finally:
             resp.close()
-        
+
         # detect stream type
-        try:            
+        try:
             self.log.debug('Metadata obtained...')
             contentType = metadata["Content-Type"]
             self.log.info('Content-Type: %s', contentType)
-            
+
         except Exception as e:
             self.log.info("Couldn't read content-type. Maybe direct stream...")
             self.log.info('Error: %s',e)
             return UrlInfo(url, False, None)
 
-        for decoder in self.decoders:  
+        for decoder in self.decoders:
             self.log.info('Checking decoder')
-            if(decoder.isStreamValid(contentType, firstbytes)):
+            if decoder.isStreamValid(contentType, firstbytes):
                 return UrlInfo(url, True, contentType, decoder)
-            
+
         # no playlist decoder found. Maybe a direct stream
         self.log.info('No playlist decoder could handle the stream. Maybe direct stream...')
         return UrlInfo(url, False, contentType)
-        
+
 
 
     def getPlaylist(self, urlInfo):
         return urlInfo.getDecoder().extractPlaylist(urlInfo.getUrl())
-

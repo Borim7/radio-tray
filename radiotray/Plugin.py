@@ -19,8 +19,8 @@
 ##########################################################################
 
 import threading
-from gi.repository import Gtk
 import logging
+from gi.repository import Gtk
 
 # This class should be extended by plugins implementations
 class Plugin(threading.Thread):
@@ -29,8 +29,9 @@ class Plugin(threading.Thread):
         threading.Thread.__init__(self)
         self.log = logging.getLogger('radiotray')
 
-    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider, mediator, tooltip):
-    
+    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider,
+        mediator, tooltip):
+
         self.name = name
         self.eventManagerWrapper = eventManagerWrapper
         self.eventSubscriber = eventSubscriber

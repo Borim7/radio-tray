@@ -30,17 +30,17 @@ class EventManager:
     NOTIFICATION = 'notification'
 
     def __init__(self):
+        self.observersMap = {self.STATE_CHANGED:[], self.SONG_CHANGED:[],
+            self.BOOKMARKS_CHANGED:[], self.STATION_ERROR:[], self.VOLUME_CHANGED:[],
+            self.BOOKMARKS_RELOADED:[], self.NOTIFICATION:[]}
 
-        
-        self.observersMap = {self.STATE_CHANGED:[], self.SONG_CHANGED:[], self.BOOKMARKS_CHANGED:[], self.STATION_ERROR:[], self.VOLUME_CHANGED:[], self.BOOKMARKS_RELOADED:[], self.NOTIFICATION:[]}
-        
-    
+
     def getObserversMap(self):
         return self.observersMap
-    
+
     def notify(self, event, data):
-        
+
         observersList = self.observersMap[event]
-        
+
         for callback in observersList:
             callback(data)

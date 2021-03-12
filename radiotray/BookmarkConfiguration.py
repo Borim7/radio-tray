@@ -18,34 +18,31 @@
 #
 ##########################################################################
 import sys
-import pdb
+import uuid
+import logging
 
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except:
+except ImportError:
     pass
 try:
     from gi.repository import Gtk, Gdk
     #import Gtk.glade
-    import os
-except Exception as e:
+except ImportError as e:
     print(e)
     sys.exit(1)
 
-from .XmlDataProvider import XmlDataProvider
 from .lib.common import APP_ICON_ON
 from .lib import utils
-from .lib import i18n
-import uuid
-import logging
+
 
 drop_yes = [Gtk.TargetEntry.new(target = "drop_yes", flags = Gtk.TargetFlags.SAME_WIDGET, info = 0)]
 drop_no = [Gtk.TargetEntry.new(target = "drop_no", flags = Gtk.TargetFlags.SAME_WIDGET, info = 0)]
 targets = [('data',Gtk.TargetFlags.SAME_APP,0)]
 
 
-class BookmarkConfiguration(object):
+class BookmarkConfiguration:
 
     GROUP_TYPE = 'GROUP'
     RADIO_TYPE = 'RADIO'
@@ -64,7 +61,7 @@ class BookmarkConfiguration(object):
         self.wTree = gladefile
         self.window = self.wTree.get_object("window1")
         self.list = self.wTree.get_object("treeview1")
-        
+
         # edit bookmark
         self.nameEntry = self.wTree.get_object("nameEntry")
         self.nameEntryLabel = self.wTree.get_object("label1")
@@ -73,13 +70,13 @@ class BookmarkConfiguration(object):
         self.config = self.wTree.get_object("editBookmark")
         self.radioGroup = self.wTree.get_object("radioGroup")
         self.radioGroupLabel = self.wTree.get_object("label8")
-        
+
         # edit group
         self.configGroup = self.wTree.get_object("editGroup")
         self.groupNameEntry = self.wTree.get_object("groupNameEntry")
         self.parentGroup = self.wTree.get_object("parentGroup")
         self.parentGroupLabel = self.wTree.get_object("label4")
-        
+
         # separator move
         self.sepMove = self.wTree.get_object("sepMove")
         self.sepGroup = self.wTree.get_object("sepGroup")
@@ -92,33 +89,33 @@ class BookmarkConfiguration(object):
 
         # populate list of radios
         self.load_data()
-        
+
         # config tree ui
         cell = Gtk.CellRendererText()
         tvcolumn = Gtk.TreeViewColumn(_('Radio Name'), cell)
         self.list.append_column(tvcolumn)
         tvcolumn.add_attribute(cell, 'text', 0)
-        
+
         # config combo ui
         cell2 = Gtk.CellRendererText()
         self.parentGroup.pack_start(cell2, True)
         self.parentGroup.add_attribute(cell2, 'text', 0)
-             
+
         # config add radio group combo ui
         cell4 = Gtk.CellRendererText()
         self.radioGroup.pack_start(cell4, True)
         self.radioGroup.add_attribute(cell4, 'text', 0)
-        
+
         # separator new group combo ui
         cell3 = Gtk.CellRendererText()
         self.sepGroup.pack_start(cell3, True)
         self.sepGroup.add_attribute(cell3, 'text', 0)
 
 
-        
+
 
         # connect events
-        if (self.window):
+        if self.window:
             dic = { "on_newBookmarkButton_clicked" : self.on_add_bookmark_clicked,
                 "on_newSeparatorButton_clicked" : self.on_add_separator_clicked,
                 "on_editBookmarkButton_clicked" : self.on_edit_bookmark_clicked,
@@ -143,7 +140,7 @@ class BookmarkConfiguration(object):
         self.list.connect("row-activated", self.on_row_activated)
 
     def load_data(self):
-    
+
         # the meaning of the three columns is: description, id, type
         treestore = Gtk.TreeStore(str, str, str)
         root = self.dataProvider.getRootGroup()
@@ -151,7 +148,7 @@ class BookmarkConfiguration(object):
         self.list.set_model(treestore)
 
 
-        
+
     #drag and drop support
     def checkSanity(self, model, source, target):
         source_path = model.get_path(source)
@@ -160,12 +157,16 @@ class BookmarkConfiguration(object):
             return False
         else:
             return True
-    
+
     #drag and drop support
     def checkParentability(self, model, target, drop_position):
 
-        if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE or drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
-            if(model.get_value(target, 2) == self.RADIO_TYPE or model.get_value(target, 2) == self.SEPARATOR_TYPE):
+        if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE or
+            drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
+
+            if(model.get_value(target, 2) == self.RADIO_TYPE or
+                model.get_value(target, 2) == self.SEPARATOR_TYPE):
+
                 return False
             else:
                 return True
@@ -184,46 +185,46 @@ class BookmarkConfiguration(object):
         #source_is_expanded = treeview.row_expanded(model.get_path(source))
         new = None
 
-        if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE) or (drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
+        if (drop_position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE or
+            drop_position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
+
             new = model.append(target, model[source][:])
 
         elif drop_position == Gtk.TreeViewDropPosition.BEFORE:
             parent = model.iter_parent(target)
             new = model.insert_before(parent, target, model[source][:])
-            
+
         elif drop_position == Gtk.TreeViewDropPosition.AFTER:
             parent = model.iter_parent(target)
             new = model.insert_after(parent, target, model[source][:])
-                        
+
         else:
             print("No data copied!")
             return
-            
-        nrChild = list(range(model.iter_n_children(source))) 
-        while(model.iter_n_children(source) > 0):
+
+        while model.iter_n_children(source) > 0:
             child = model.iter_nth_child(source, 0)
             self.copyRow(treeview, model, child, new, Gtk.TreeViewDropPosition.INTO_OR_BEFORE)
-                
+
         model.remove(source)
 
-                                 
-        
+
+
         #if source_is_expanded:
         #    self.expandToPath(treeview, model.get_path(new))
- 
+
 
     def onDataGet(self, widget, context, selection, info, time):
         treeselection = widget.get_selection()
         model, iter = treeselection.get_selected()
         data = model.get_value(iter, 0)
         selection.set(selection.get_target(), 8, data)
-        return
 
-    #drag and drop support   
+    #drag and drop support
     def onDragDataReceived(self, treeview, drag_context, x, y, selection_data, info, eventtime):
 
         #check if there's a valid drop location
-        if(treeview.get_dest_row_at_pos(x, y) == None):
+        if treeview.get_dest_row_at_pos(x, y) is None:
             self.log.debug("Dropped into nothing")
             return
 
@@ -233,8 +234,8 @@ class BookmarkConfiguration(object):
         sourceName = model.get_value(source,1)
         targetName = model.get_value(target,1)
 
-        print("source: " + sourceName + " , target: " + targetName);
-        
+        print("source: " + sourceName + " , target: " + targetName)
+
         is_sane = self.checkSanity(model, source, target)
         is_parentable = self.checkParentability(model, target, drop_position)
 
@@ -250,7 +251,7 @@ class BookmarkConfiguration(object):
         else:
             drag_context.finish(False, False, eventtime)
 
-    
+
 
 
 
@@ -258,17 +259,18 @@ class BookmarkConfiguration(object):
     def add_group_data(self, group, parent, treestore):
 
         iter = None
-        if(group.get('name') != 'root'):
+        if group.get('name') != 'root':
             iter = treestore.append(parent, [group.get('name'), group.get('name'), self.GROUP_TYPE])
-        
+
         for item in group:
-            
-            if item.get('name') == None:                
+
+            if item.get('name') is None:
                 continue
-            
-            if (item.tag == 'bookmark'):
-                if(item.get('name').startswith('[separator')):
-                    treestore.append(iter, ['-- ' + _('Separator') + ' --', item.get('name'), self.SEPARATOR_TYPE])
+
+            if item.tag == 'bookmark':
+                if item.get('name').startswith('[separator'):
+                    treestore.append(iter, ['-- ' + _('Separator') + ' --',
+                        item.get('name'), self.SEPARATOR_TYPE])
                 else:
                     treestore.append(iter, [item.get('name'), item.get('name'), self.RADIO_TYPE])
             else:
@@ -289,19 +291,19 @@ class BookmarkConfiguration(object):
         self.nameEntry.grab_focus()
         self.radioGroup.show()
         self.radioGroupLabel.show()
-        
+
         # populate groups
         liststore = Gtk.ListStore(str)
 
         for group in self.dataProvider.listGroupNames():
             liststore.append([group])
             print("group found: " + group)
-            
+
         self.radioGroup.set_model(liststore)
-        
+
         # default to root
         self.radioGroup.set_active(0)
-        
+
         # get current selected group and set it as default
         selection = self.list.get_selection()
         (model, iter) = selection.get_selected()
@@ -309,8 +311,8 @@ class BookmarkConfiguration(object):
         if type(iter).__name__=='TreeIter':
             selectedName = model.get_value(iter,1)
             selectedType = model.get_value(iter, 2)
-            
-            if (selectedType == self.GROUP_TYPE):
+
+            if selectedType == self.GROUP_TYPE:
                 groupIndex = self.dataProvider.listGroupNames().index(selectedName)
                 self.radioGroup.set_active(groupIndex)
 
@@ -339,16 +341,16 @@ class BookmarkConfiguration(object):
 
             selectedName = model.get_value(iter,1)
             selectedType = model.get_value(iter, 2)
-            
+
             liststore = Gtk.ListStore(str)
 
             for group in self.dataProvider.listGroupNames():
                 liststore.append([group])
                 self.log.debug('group found: "%s"', group)
-            
 
-            if (selectedType == self.RADIO_TYPE):
-                
+
+            if selectedType == self.RADIO_TYPE:
+
                 #set combo box model
                 self.radioGroup.set_model(liststore)
 
@@ -385,32 +387,32 @@ class BookmarkConfiguration(object):
                     else:
                         self.log.debug('No radio information provided!')
                 self.config.hide()
-                
-            elif(selectedType == self.GROUP_TYPE):
-             
+
+            elif selectedType == self.GROUP_TYPE:
+
                 #set  combo box model
                 self.parentGroup.set_model(liststore)
-                
+
                 #get group details
                 selectedGroup = self.dataProvider._groupExists(selectedName)
                 currentGroup = selectedGroup.getparent().get("name")
                 groupIndex = self.dataProvider.listGroupNames().index(currentGroup)
-                
+
                 #populate dialog with group information
                 self.groupNameEntry.set_text(selectedName)
                 self.configGroup.set_title(_('Edit group'))
                 oldName = selectedName
                 self.parentGroup.set_active(groupIndex)
-                
+
                 result = self.configGroup.run()
                 if result == 2:
                     name = self.groupNameEntry.get_text()
                     index = self.parentGroup.get_active()
                     new_group = liststore[index][0]
-                    
-                    
+
+
                     if len(name) > 0:
-                        if(self.dataProvider.updateGroup(oldName, name)):
+                        if self.dataProvider.updateGroup(oldName, name):
                             model.set_value(iter,0,name)
                             model.set_value(iter,1,name)
                         if new_group != selectedName and new_group != currentGroup:
@@ -418,11 +420,11 @@ class BookmarkConfiguration(object):
                             self.load_data()
                         else:
                             self.log.debug('No group information provided')
-                    
+
                 self.configGroup.hide()
 
-            elif(selectedType == self.SEPARATOR_TYPE):
-                
+            elif selectedType == self.SEPARATOR_TYPE:
+
                 #Set combo box model
                 self.sepGroup.set_model(liststore)
 
@@ -430,7 +432,7 @@ class BookmarkConfiguration(object):
                 selectedRadio = self.dataProvider._radioExists(selectedName)
                 currentGroup = selectedRadio.getparent().get("name")
                 groupIndex = self.dataProvider.listGroupNames().index(currentGroup)
-                
+
                 # populate dialog with radio information
                 self.sepMove.set_title(_('Edit Separator'))
                 self.sepGroup.grab_focus()
@@ -442,18 +444,18 @@ class BookmarkConfiguration(object):
                 if result == 2:
                     index = self.sepGroup.get_active()
                     new_group = liststore[index][0]
-                    
+
                     if new_group != currentGroup:
                         self.dataProvider.updateElementGroup(selectedRadio, new_group)
                         self.load_data()
-                    
+
                 self.sepMove.hide()
-            
+
     def on_row_activated(self, widget, row, cell):
-      self.on_edit_bookmark_clicked(widget)
-    
-    
-    
+        self.on_edit_bookmark_clicked(widget)
+
+
+
     def on_remove_bookmark_clicked(self, widget):
 
         #get current selected element
@@ -520,19 +522,19 @@ class BookmarkConfiguration(object):
         self.parentGroupLabel.show()
         self.parentGroup.show()
         self.groupNameEntry.grab_focus()
-        
+
         # populate parent groups
         liststore = Gtk.ListStore(str)
 
         for group in self.dataProvider.listGroupNames():
             liststore.append([group])
             self.log.debug('group found: "%s"', group)
-            
+
         self.parentGroup.set_model(liststore)
-            
+
         # default to root
         self.parentGroup.set_active(0)
-        
+
         # get current selected group and set it as default
         selection = self.list.get_selection()
         (model, iter) = selection.get_selected()
@@ -540,15 +542,15 @@ class BookmarkConfiguration(object):
         if type(iter).__name__=='TreeIter':
             selectedName = model.get_value(iter,1)
             selectedType = model.get_value(iter, 2)
-            
-            if (selectedType == self.GROUP_TYPE):
+
+            if selectedType == self.GROUP_TYPE:
                 groupIndex = self.dataProvider.listGroupNames().index(selectedName)
                 self.parentGroup.set_active(groupIndex)
 
         # show dialog
         result = self.configGroup.run()
         if result == 2:
-        
+
             # get group name
             name = self.groupNameEntry.get_text()
 

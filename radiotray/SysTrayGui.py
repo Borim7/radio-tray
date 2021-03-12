@@ -17,15 +17,16 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
+import sys
 try:
     import gi
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
-except Exception as e:
+except ImportError as e:
     print(e)
     sys.exit(1)
 
-from .lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
+from .lib.common import APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT
 from .lib.utils import html_escape
 
 # This class handles the gui for the systray mode
@@ -39,10 +40,10 @@ class SysTrayGui:
 
 
     def buildMenu(self):
-        
+
         # radios menu
         self.radioMenu = Gtk.Menu()
-            
+
         if not self.mediator.context.station:
             self.turnOnOff = Gtk.MenuItem(_("Turned Off"), False)
             self.turnOnOff2 = Gtk.MenuItem(_("Turned Off"), False)
@@ -51,9 +52,9 @@ class SysTrayGui:
         else:
             self.turnOnOff = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)
             self.turnOnOff.set_sensitive(True)
-            self.turnOnOff2 = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)                
+            self.turnOnOff2 = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)
             self.turnOnOff2.set_sensitive(True)
-            
+
         self.turnOnOff.connect('activate', self.handler.on_turn_on_off)
         self.turnOnOff2.connect('activate', self.handler.on_turn_on_off)
         self.update_radios()
@@ -69,11 +70,11 @@ class SysTrayGui:
         #Check bookmarks file status
         menu_item1.set_sensitive(self.provider.isBookmarkWritable())
 
-        menu_item4 = Gtk.MenuItem(_("Reload Bookmarks"))        
+        menu_item4 = Gtk.MenuItem(_("Reload Bookmarks"))
         menu_item3 = Gtk.ImageMenuItem(Gtk.STOCK_ABOUT)
         menu_item2 = Gtk.ImageMenuItem(Gtk.STOCK_QUIT)
         self.menu.append(self.turnOnOff2)
-        self.menu.append(separator)  
+        self.menu.append(separator)
         self.menu.append(menu_item1)
 
         # plugins sub-menu
@@ -83,28 +84,28 @@ class SysTrayGui:
         menu_item5 = Gtk.MenuItem(_("Configure Plugins..."))
         self.menu_plugins.append(menu_item5)
         self.menu_plugins.append(Gtk.MenuItem())    #add separator
-        self.menu.append(menu_plugins_item) 
+        self.menu.append(menu_plugins_item)
 
-        self.menu.append(menu_item4)        
-        self.menu.append(Gtk.MenuItem())        
+        self.menu.append(menu_item4)
+        self.menu.append(Gtk.MenuItem())
         self.menu.append(menu_item3)
-        self.menu.append(menu_item2)        
+        self.menu.append(menu_item2)
         menu_item1.show()
         menu_item2.show()
         menu_item3.show()
         menu_item4.show()
         self.turnOnOff2.show()
-        separator.show()   
+        separator.show()
 
-          
+
         # set handlers for menu items
-        
+
         menu_item1.connect('activate', self.handler.on_preferences)
         menu_item2.connect('activate', self.handler.on_quit)
         menu_item3.connect('activate', self.handler.on_about)
         menu_item4.connect('activate', self.handler.reload_bookmarks)
         menu_item5.connect('activate', self.handler.on_plugin_preferences)
-                        
+
         self.menu.show_all()
 
         # TODO StatusIcon is deprecated so this class is a candidate for removal
@@ -118,10 +119,10 @@ class SysTrayGui:
 
     def button_press(self,widget,event):
 
-        if(event.button == 1):
+        if event.button == 1:
             self.radioMenu.popup(None, None, Gtk.status_icon_position_menu, 0, event.get_time(), widget)
-        elif (event.button == 2):
-            if (self.mediator.getContext().state == 'playing'):
+        elif event.button == 2:
+            if self.mediator.getContext().state == 'playing':
                 self.mediator.stop()
             else:
                 if self.mediator.getContext().station:
@@ -151,25 +152,25 @@ class SysTrayGui:
     def group_callback(self, group_name, user_data):
 
         new_user_data = None
-        
+
         if group_name != 'root':
             group = Gtk.MenuItem(group_name, False)
-            user_data.append(group)  
+            user_data.append(group)
             new_user_data = Gtk.Menu()
             group.set_submenu(new_user_data)
         else:
             new_user_data = self.radioMenu
-            
+
         return new_user_data
 
 
     def bookmark_callback(self, radio_name, user_data):
 
         if radio_name.startswith("[separator-"):
-            separator = Gtk.MenuItem() 
+            separator = Gtk.MenuItem()
             user_data.append(separator)
             separator.show()
-        else:         
+        else:
             radio = Gtk.MenuItem(radio_name, False)
             radio.show()
             radio.connect('activate', self.handler.on_start, radio_name)
@@ -180,16 +181,16 @@ class SysTrayGui:
 
         state = data['state']
 
-        if(state == 'playing'):
+        if state == 'playing':
             station = data['station']
             self.turnOnOff.set_label(C_('Turns off the current radio.', 'Turn Off "%s"') % station)
             self.turnOnOff.set_sensitive(True)
-            
+
             self.turnOnOff2.set_label(C_('Turns off the current radio.', 'Turn Off "%s"') % station)
             self.turnOnOff2.set_sensitive(True)
             self.icon.set_from_file(APP_ICON_ON)
-            
-        elif(state == 'paused'):
+
+        elif state == 'paused':
             if not self.mediator.context.station:
                 self.turnOnOff.set_label(_('Turned Off'))
                 self.turnOnOff.set_sensitive(False)
@@ -202,14 +203,15 @@ class SysTrayGui:
                 self.turnOnOff2.set_sensitive(True)
 
             self.icon.set_from_file(APP_ICON_OFF)
-        
-        elif(state == 'connecting'):
+
+        elif state == 'connecting':
             station = data['station']
             self.turnOnOff.set_sensitive(True)
             self.turnOnOff.set_label(C_('Turns off the current radio.', 'Turn Off "%s"') % station)
-            
+
             self.turnOnOff2.set_sensitive(True)
-            self.icon.set_tooltip_markup(C_("Connecting to a music stream.", "Connecting to %s") % station.replace("&", "&amp;"))
+            self.icon.set_tooltip_markup(C_("Connecting to a music stream.",
+                "Connecting to %s") % station.replace("&", "&amp;"))
             self.icon.set_from_file(APP_ICON_CONNECT)
 
 
@@ -223,11 +225,13 @@ class SysTrayGui:
         songInfo = html_escape(self.mediator.getContext().getSongInfo())
         volume = self.mediator.getVolume()
 
-        if (self.mediator.getContext().state == 'playing'):
-            if(songInfo):
-                return C_("Informs what radio and music is being played as a tooltip.", "Playing <b>%s</b> (vol: %s%%)\n<i>%s</i>") % (radio, volume, songInfo)
+        if self.mediator.getContext().state == 'playing':
+            if songInfo:
+                return C_("Informs what radio and music is being played as a tooltip.",
+                    "Playing <b>%s</b> (vol: %s%%)\n<i>%s</i>") % (radio, volume, songInfo)
             else:
-                return C_("Informs what radio and music is being played as a tooltip.", "Playing <b>%s</b> (vol: %s%%)") % (radio, volume)
+                return C_("Informs what radio and music is being played as a tooltip.",
+                    "Playing <b>%s</b> (vol: %s%%)") % (radio, volume)
         else:
             return C_("Informs Radio Tray is idle as a tooltip.", "Idle (vol: %s%%)") % (volume)
 

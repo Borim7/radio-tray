@@ -18,7 +18,7 @@
 #
 ##########################################################################
 
-class UrlInfo(object):
+class UrlInfo:
 
     def __init__(self, url, playlist, contentType, decoder = None):
         self.url = url

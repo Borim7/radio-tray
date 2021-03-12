@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import os
-from . import i18n
+
 from xdg.BaseDirectory import xdg_data_home
+# provide translation functions for complete code base
+from . import i18n # pylint: disable=unused-import
 
 try:
-    from defs import *
-except:
+    from defs import * # pylint: disable=wildcard-import
+except ImportError:
     APPVERSION = "0.8.1"
     if os.uname()[0] == 'OpenBSD':
         datadir = "/usr/local/share"
@@ -89,13 +91,7 @@ LOGFILE = os.path.join(USER_CFG_PATH,'radiotray.log')
 ICON_FILE = os.path.join(USER_CFG_PATH,'icon')
 
 # user-agent
-try:
-    import platform
-    USER_AGENT = "%s/%s (%s %s; %s/%s (%s))" % ("RadioTray", APPVERSION, platform.system(), platform.machine(),
-                                                platform.linux_distribution()[0], platform.linux_distribution()[1],
-                                                platform.linux_distribution()[2])
-except:
-    USER_AGENT = "RadioTray/" + APPVERSION
+USER_AGENT = "RadioTray/" + APPVERSION
 
 
 def getDefaultHttpHeader():

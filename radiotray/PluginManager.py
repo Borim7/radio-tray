@@ -17,20 +17,22 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-
-from radiotray.lib.common import USER_PLUGIN_PATH
-from radiotray.lib.common import SYSTEM_PLUGIN_PATH
-from radiotray.PluginInfo import PluginInfo
-from radiotray.XmlConfigProvider import XmlConfigProvider
 import os
 import sys
 import logging
 import shutil
+from radiotray.lib.common import USER_PLUGIN_PATH
+from radiotray.lib.common import SYSTEM_PLUGIN_PATH
+from radiotray.PluginInfo import PluginInfo
+from radiotray.XmlConfigProvider import XmlConfigProvider
+
 
 # The purpose of this class is handle all plugin lifecycle operations
 class PluginManager:
 
-    def __init__(self, eventManagerWrapper, eventSubscriber, provider, cfgProvider, mediator, tooltip, pluginMenu):
+    def __init__(self, eventManagerWrapper, eventSubscriber, provider, cfgProvider,
+        mediator, tooltip, pluginMenu):
+
         self.eventManagerWrapper = eventManagerWrapper
         self.eventSubscriber = eventSubscriber
         self.provider = provider
@@ -54,18 +56,20 @@ class PluginManager:
                 plugin = info.instance
                 #create custom config provider
                 cfgProvider = None
-                if(os.path.exists(info.configFile)):
+                if os.path.exists(info.configFile):
                     cfgProvider = XmlConfigProvider(info.configFile)
                     cfgProvider.loadFromFile()
 
-                plugin.initialize(info.name, self.eventManagerWrapper, self.eventSubscriber, self.provider, cfgProvider, self.mediator, self.tooltip)
+                plugin.initialize(info.name, self.eventManagerWrapper,
+                    self.eventSubscriber, self.provider, cfgProvider, self.mediator,
+                    self.tooltip)
 
                 plugin.start()
                 if plugin.hasMenuItem():
-                    self.pluginMenu.append(plugin.getMenuItem())            
-           
+                    self.pluginMenu.append(plugin.getMenuItem())
 
-            
+
+
     def activatePlugin(self, name):
 
         self.log.debug('activate')
@@ -77,12 +81,13 @@ class PluginManager:
         #    if(os.path.exists(info.configFile)):
         #        cfgProvider = XmlConfigProvider(info.configFile)
         #        cfgProvider.loadFromFile()
-        #    plugin.initialize(info.name, self.eventManagerWrapper, self.eventSubscriber, self.provider, cfgProvider, self.mediator, self.tooltip)
+        #    plugin.initialize(info.name, self.eventManagerWrapper, self.eventSubscriber,
+        #        self.provider, cfgProvider, self.mediator, self.tooltip)
 
         #    plugin.start()
         #    if plugin.hasMenuItem():
-        #        self.pluginMenu.append(plugin.getMenuItem())            
-            
+        #        self.pluginMenu.append(plugin.getMenuItem())
+
 
     def deactivatePlugin(self, name):
 
@@ -107,7 +112,7 @@ class PluginManager:
         else:
             self.log.info('user plugin dir does not exist. ignoring...')
 
-        
+
         if os.path.exists(SYSTEM_PLUGIN_PATH):
             self.log.info('finding plugins in system plugin path')
             files = os.listdir(SYSTEM_PLUGIN_PATH)
@@ -118,7 +123,7 @@ class PluginManager:
         else:
             self.log.info('system plugin dir does not exist. ignoring...')
 
-            
+
         self.pluginInfos = self.parsePluginInfo(pluginFiles)
 
 
@@ -141,26 +146,25 @@ class PluginManager:
             pInfo = PluginInfo()
 
             for line in lines:
-                if line.startswith('name') == True:
+                if line.startswith('name'):
                     pInfo.name = line.split("=",1)[1]
-                elif line.startswith('desc') == True:
+                elif line.startswith('desc'):
                     pInfo.desc = line.split("=",1)[1]
-                elif line.startswith('script') == True:
+                elif line.startswith('script'):
                     pInfo.script = line.split("=",1)[1]
-                elif line.startswith('author') == True:
+                elif line.startswith('author'):
                     pInfo.author = line.split("=",1)[1]
-                elif line.startswith('class') == True:
+                elif line.startswith('class'):
                     pInfo.clazz = line.split("=",1)[1]
-            
+
             filename = os.path.basename(p)
             originalFile = os.path.join(os.path.dirname(p), filename[:filename.find('.')] + '.config')
             correctFile = os.path.join(USER_PLUGIN_PATH, filename[:filename.find('.')] + '.config')
 
             # copy template of plugin config into home, when config missing
             if os.path.exists(originalFile) and not os.path.exists(correctFile):
-                    shutil.copyfile(originalFile, correctFile)
+                shutil.copyfile(originalFile, correctFile)
 
             pInfo.configFile = correctFile
             infos[pInfo.name] = pInfo
         return infos
-

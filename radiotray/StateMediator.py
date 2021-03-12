@@ -17,44 +17,44 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .AudioPlayerGStreamer import AudioPlayerGStreamer
-from .SysTray import SysTray
-from .lib.common import APPNAME
+import logging
 from .Context import Context
 from .events.EventManager import EventManager
-import logging
 
-class StateMediator(object):
+
+class StateMediator:
 
     def __init__(self, provider, cfg_provider, eventManager):
         self.provider = provider
         self.cfg_provider = cfg_provider
         self.eventManager = eventManager
-        
+
         self.context = Context()
         self.context.state = Context.STATE_PAUSED
 
         radio = self.cfg_provider.getConfigValue("last_station")
-        self.context.station = '' if not radio else radio 
+        self.context.station = '' if not radio else radio
 
         self.volume = float(self.cfg_provider.getConfigValue("volume_level"))
         self.bitrate = 0
-        
+
+        self.audioPlayer = None
+
         # validate station
         if not self.provider.getRadioUrl(radio):
             self.context.station = ''
-        
+
         self.log = logging.getLogger('radiotray')
-        
+
     def init(self, audioPlayer):
         self.audioPlayer = audioPlayer
         # set volume level (can't call set_volume yet)
         self.audioPlayer.player.set_property("volume", self.volume)
-        
-        
+
+
     def getContext(self):
         return self.context
-        
+
 
 
 # ---  control commands ----
@@ -62,15 +62,16 @@ class StateMediator(object):
     def play(self, radio):
 
         self.log.debug('Request to play')
-        if(self.context.state == 'playing'):
+        if self.context.state == 'playing':
             self.stop()
-            
+
         url = self.provider.getRadioUrl(radio)
 
-        if(url):
+        if url:
             self.context.station = radio
-            self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'connecting', 'station':radio})
-                
+            self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'connecting',
+                'station':radio})
+
             self.audioPlayer.start(url)
             self.cfg_provider.setConfigValue("last_station", radio)
         else:
@@ -80,10 +81,11 @@ class StateMediator(object):
     def playUrl(self, url):
 
         self.log.debug('Request to play: %s', url)
-        if(self.isPlaying):
+        if self.isPlaying():
             self.audioPlayer.stop()
-        
-        self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'connecting', 'station':Context.UNKNOWN_RADIO})
+
+        self.eventManager.notify(EventManager.STATE_CHANGED, {'state':'connecting',
+            'station':Context.UNKNOWN_RADIO})
         self.context.station = Context.UNKNOWN_RADIO
         self.audioPlayer.start(url)
 
@@ -110,31 +112,28 @@ class StateMediator(object):
     def set_volume(self, value):
         self.log.debug('set volume: %s', str(value))
         self.audioPlayer.player.set_property("volume", value)
-        self.systray.updateTooltip()
-        
+
     def getVolume(self):
-        return int(round(self.volume * 100))    
-        
+        return int(round(self.volume * 100))
+
     def updateVolume(self, volume):
         self.volume = volume
         self.cfg_provider.setConfigValue("volume_level", str(round(self.volume,2)))
 
 
-   
     def on_state_changed(self, data):
         self.context.state = data['state']
         self.log.debug(self.context.state)
-        
-        
+
+
     def on_station_error(self, data):
         self.context.state = 'paused'
         self.log.debug(self.context.state)
-        
-        
+
+
     def on_song_changed(self, data):
 
-        if('artist' in list(data.keys())):
+        if 'artist' in list(data.keys()):
             self.context.artist = data['artist']
-        if('title' in list(data.keys())):
+        if 'title' in list(data.keys()):
             self.context.title = data['title']
-

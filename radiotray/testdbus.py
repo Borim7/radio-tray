@@ -25,7 +25,9 @@ import getopt
 def main(argv):
 
     try:
-        opts, args = getopt.getopt(argv, "hlr:s", ["help", "list", "radio=", "stop", "up", "down", "current", "metadata", "url=", "toggle"])
+        opts, unused_args = getopt.getopt(argv, "hlr:s",
+            ["help", "list", "radio=", "stop", "up", "down", "current", "metadata",
+             "url=", "toggle"])
 
         bus = dbus.SessionBus()
         radiotray = bus.get_object('net.sourceforge.radiotray', '/net/sourceforge/radiotray')

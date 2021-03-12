@@ -18,19 +18,19 @@
 #
 ##########################################################################
 import os
-from lxml import etree
-from lxml import objectify
 import logging
+from lxml import etree
 
 
 class XmlConfigProvider:
 
     def __init__(self, filename):
+        self.root = None
         self.log = logging.getLogger('radiotray')
-        if(os.access(filename, os.R_OK) == False):
-            raise Exception('Configuration file not found: ' + filename)
-        else:
+        if os.access(filename, os.R_OK):
             self.filename = filename
+        else:
+            raise Exception('Configuration file not found: ' + filename)
 
 
     def loadFromFile(self):
@@ -47,22 +47,25 @@ class XmlConfigProvider:
 
 
     def getConfigValue(self, name):
-        result = self.root.xpath("//option[@name=$var]/@value", var=name)
-        if(len(result) >= 1):
-            return result[0]
+        if self.root is not None:
+            result = self.root.xpath("//option[@name=$var]/@value", var=name)
+            if len(result) >= 1:
+                return result[0]
+
+        return None
 
 
     def setConfigValue(self, name, value):
-        
+
         setting = self._settingExists(name)
 
-        if (setting == None):
+        if setting is None:
             setting = etree.SubElement(self.root, 'option')
             setting.set("name", name)
             setting.set("value", value)
         else:
             setting.set("value", value)
-            
+
         self.saveToFile()
 
     def getConfigList(self, name):
@@ -73,7 +76,7 @@ class XmlConfigProvider:
     def setConfigList(self, name, items):
         setting = self._settingExists(name)
 
-        if (setting == None):
+        if setting is None:
             setting = etree.SubElement(self.root, 'option')
             setting.set("name", name)
         else:
@@ -83,23 +86,19 @@ class XmlConfigProvider:
                 self.log.debug('remove child %s', child.text)
                 setting.remove(child)
 
-
-        
-            
-        
         for item in items:
             it = etree.SubElement(setting, 'item')
             it.text = item
 
         self.saveToFile()
-            
+
 
     def _settingExists(self, name):
         setting = None
 
         try:
             setting = self.root.xpath("//option[@name=$var]", var=name)[0]
-        except IndexError as e:
+        except IndexError:
             # Setting wasn't found
             self.log.warn('Could not find setting with the name "%s".', name)
 

@@ -17,11 +17,12 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .lib.common import getDefaultHttpHeader
-from lxml import etree
-from io import StringIO
 import logging
+from io import StringIO
 import requests
+from lxml import etree
+from .lib.common import getDefaultHttpHeader
+
 
 class AsxPlaylistDecoder:
 
@@ -32,13 +33,16 @@ class AsxPlaylistDecoder:
 
     def isStreamValid(self, contentType, firstBytes):
 
-        if(('audio/x-ms-wax' in contentType or 'video/x-ms-wvx' in contentType or 'video/x-ms-asf' in contentType or 'video/x-ms-wmv' in contentType) and firstBytes.strip().lower().startswith(b'<asx')):
+        if(('audio/x-ms-wax' in contentType or 'video/x-ms-wvx' in contentType or
+            'video/x-ms-asf' in contentType or 'video/x-ms-wmv' in contentType) and
+            firstBytes.strip().lower().startswith(b'<asx')):
+
             self.log.info('Stream is readable by ASX Playlist Decoder')
             return True
         else:
             return False
 
-        
+
     def extractPlaylist(self,  url):
 
         self.log.info('Downloading playlist...')
@@ -63,12 +67,12 @@ class AsxPlaylistDecoder:
 
         result = root.xpath("//ref/@href")
 
-        if (len(result) > 0):
+        if len(result) > 0:
 
             for i in range(1,len(result)):
 
                 tmp = result[i]
-                if (tmp.endswith("?MSWMExt=.asf")):
+                if tmp.endswith("?MSWMExt=.asf"):
                     result[i] = tmp.replace("http", "mms")
             return result
         else:

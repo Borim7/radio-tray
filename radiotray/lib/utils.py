@@ -22,10 +22,8 @@ from os.path import exists, join
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-    import dbus
-    import dbus.service
-except:
-      pass
+except ImportError:
+    pass
 
 try:
     from gi.repository import Gtk
@@ -33,9 +31,10 @@ except ImportError as e:
     print(str(e))
     raise SystemExit
 
+from . import common
+
 
 def load_ui_file(name):
-    from . import common
     ui = Gtk.Builder()
     ui.add_from_file(join(common.DEFAULT_CFG_PATH, name))
     return ui
@@ -43,26 +42,34 @@ def load_ui_file(name):
 paths = ("/usr/local/share/radiotray","/usr/share/radiotray")
 
 def tryopen(filename):
-    """Returns a reading file handle for filename, searching through directories in the supplied paths."""
+    """Returns a reading file handle for filename,
+    searching through directories in a built-in list.
+    """
     try:
         f = open(filename)
         return f
-    except IOError as e:
+    except IOError:
         for p in paths:
             try:
                 f = open(join(p,filename))
                 return f
-            except IOError as e:
-                0
+            except IOError:
+                pass
     raise IOError("Unable to find file "+filename)
 
 def findfile(filename):
-    """Looks for filename, searching a built-in list of directories; returns the path where it finds the file."""
-    if exists(filename): return filename
+    """Looks for filename, searching a built-in list of directories;
+    returns the path where it finds the file.
+    """
+    if exists(filename):
+        return filename
     for p in paths:
         x = join(p,filename)
         print(x)
-        if exists(x): return x
+        if exists(x):
+            return x
+
+    return None
 
 
 def html_escape(text):

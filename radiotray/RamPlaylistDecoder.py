@@ -17,9 +17,12 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import urllib.request, urllib.error, urllib.parse
-from .lib.common import USER_AGENT
 import logging
+import urllib.request
+import urllib.error
+import urllib.parse
+from .lib.common import USER_AGENT
+
 
 class RamPlaylistDecoder:
 
@@ -43,19 +46,19 @@ class RamPlaylistDecoder:
         req = urllib.request.Request(url)
         req.add_header('User-Agent', USER_AGENT)
         f = urllib.request.urlopen(req)
-        str = f.read()
+        strData = f.read()
         f.close()
 
         self.log.info('Playlist downloaded')
         self.log.info('Decoding playlist...')
 
-        lines = str.splitlines()
+        lines = strData.splitlines()
         playlist = []
 
         for line in lines:
-            if line.startswith("#") == False and len(line) > 0:
+            if not line.startswith("#") and len(line) > 0:
                 tmp = line.strip()
-                if(len(tmp) > 0):
+                if len(tmp) > 0:
                     playlist.append(line.strip())
 
         return playlist

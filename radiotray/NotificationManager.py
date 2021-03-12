@@ -17,14 +17,13 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .lib.common import APPNAME
-from .events.EventMngNotificationWrapper import EventMngNotificationWrapper
-from .lib.common import getDefaultHttpHeader, ICON_FILE
 import logging
 import traceback
 import requests
+from .lib.common import APPNAME
+from .lib.common import getDefaultHttpHeader, ICON_FILE
 
-class NotificationManager(object):
+class NotificationManager:
 
     def __init__(self, eventManagerWrapper):
         self.eventManagerWrapper = eventManagerWrapper
@@ -51,31 +50,33 @@ class NotificationManager(object):
         msgTitle = "%s - %s" % (APPNAME , station)
         msg = None
 
-        if('artist' in list(data.keys()) and 'title' in list(data.keys())):
+        if 'artist' in list(data.keys()) and 'title' in list(data.keys()):
             artist = data['artist']
             title = data['title']
             msg = "%s - %s" % (artist, title)
-        elif('artist' in list(data.keys())):
+        elif 'artist' in list(data.keys()):
             msg = data['artist']
-        elif('title' in list(data.keys())):
+        elif 'title' in list(data.keys()):
             msg = data['title']
 
-        if('homepage' in list(data.keys()) and (data['homepage'].endswith('png') or data['homepage'].endswith('jpg'))):
+        if('homepage' in list(data.keys()) and (data['homepage'].endswith('png') or
+            data['homepage'].endswith('jpg'))):
+
             #download image
             try:
                 resp = requests.get(data['homepage'], headers=getDefaultHttpHeader())
-                
+
                 f = open(ICON_FILE,'wb')
                 try:
                     f.write(resp.content)
-                except Exception as e:
+                except Exception:
                     self.log.warn('Error saving icon')
                 finally:
                     f.close()
 
                 self.eventManagerWrapper.notify_icon(msgTitle, msg, ICON_FILE)
 
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
                 self.eventManagerWrapper.notify(msgTitle, msg)
         else:
@@ -88,5 +89,3 @@ class NotificationManager(object):
     def on_bookmarks_reloaded(self, data):
 
         self.eventManagerWrapper.notify(_("Bookmarks Reloaded"), _("Bookmarks Reloaded"))
-
-

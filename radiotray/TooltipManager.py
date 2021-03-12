@@ -17,11 +17,11 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .events.EventManager import EventManager
 
-class TooltipManager(object):
+class TooltipManager:
 
     def __init__(self):
+        self.gui = None
         self.tooltipSources = []
 
 
@@ -34,14 +34,13 @@ class TooltipManager(object):
 
 
     def update(self):
-        complete = ''
-        for src in self.tooltipSources:
-            s = src()
-            if s != None:
-                complete += s + '\n'
+        if self.gui is not None:
+            complete = ''
+            for src in self.tooltipSources:
+                s = src()
+                if s is not None:
+                    complete += s + '\n'
 
-        complete = complete.strip("\n")
+            complete = complete.strip("\n")
 
-        self.gui.setTooltip(complete)
-
-    
+            self.gui.setTooltip(complete)

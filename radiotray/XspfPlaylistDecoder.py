@@ -17,11 +17,14 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from lxml import etree
+
 from io import StringIO
-from .lib.common import getDefaultHttpHeader
 import logging
 import requests
+
+from lxml import etree
+from .lib.common import getDefaultHttpHeader
+
 
 class XspfPlaylistDecoder:
 
@@ -32,12 +35,12 @@ class XspfPlaylistDecoder:
 
     def isStreamValid(self, contentType, firstBytes):
 
-        if('application/xspf+xml' in contentType):
+        if 'application/xspf+xml' in contentType:
             self.log.info('Stream is readable by XSPF Playlist Decoder')
             return True
         else:
             return False
-        
+
 
 
     def extractPlaylist(self,  url):
@@ -52,13 +55,14 @@ class XspfPlaylistDecoder:
         parser = etree.XMLParser(recover=True)
         root = etree.parse(StringIO(resp.text),parser)
 
-        elements = root.xpath("//xspf:track/xspf:location",namespaces={'xspf':'http://xspf.org/ns/0/'})
+        elements = root.xpath("//xspf:track/xspf:location",
+            namespaces={'xspf':'http://xspf.org/ns/0/'})
 
         result = []
         for r in elements:
             result.append(r.text)
 
-        if (len(result) > 0):
+        if len(result) > 0:
             return result
         else:
             return None

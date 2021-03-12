@@ -17,10 +17,14 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-import dbus
-import sys, os, string
-import dbus.mainloop.glib
+
+import sys
+import os
 from shutil import move, copy2
+import logging
+import logging.handlers
+
+import dbus.mainloop.glib
 
 from .XmlDataProvider import XmlDataProvider
 from .XmlConfigProvider import XmlConfigProvider
@@ -34,24 +38,23 @@ from .events.EventSubscriber import EventSubscriber
 from .DbusFacade import DbusFacade
 from .TooltipManager import TooltipManager
 from .PluginManager import PluginManager
-from .lib.common import APPDIRNAME, USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
+from .lib.common import USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
     DEFAULT_RADIO_LIST, OPTIONS_CFG_NAME, DEFAULT_CONFIG_FILE,\
     USER_PLUGIN_PATH, LOGFILE
 from . import mpris
 from .GuiChooserConfiguration import GuiChooserConfiguration
-import logging
-from logging import handlers
 
-class RadioTray(object):
+
+class RadioTray:
 
     def __init__(self, url=None):
-        
+
         self.loadConfiguration()
-        
+
         self.logger.info('Starting Radio Tray...')
 
         # load configuration
-        
+
         # load bookmarks data provider and initializes it
         self.provider = XmlDataProvider(self.filename)
         self.provider.loadFromFile()
@@ -79,16 +82,17 @@ class RadioTray(object):
         self.logger.debug("Tooltip manager initialized.")
 
         # chooser
-        if(url == '--config'):
+        if url == '--config':
             chooser = GuiChooserConfiguration()
             gui_engine = chooser.run()
             self.cfg_provider.setConfigValue("gui_engine", gui_engine)
             url = None
         # load gui
-        self.systray = SysTray(self.mediator, self.provider, self.cfg_provider, self.default_cfg_provider, eventManager, tooltipManager)
-        self.logger.debug("GUI initialized")        
-        
-        
+        self.systray = SysTray(self.mediator, self.provider, self.cfg_provider,
+            self.default_cfg_provider, eventManager, tooltipManager)
+        self.logger.debug("GUI initialized")
+
+
         # notification manager
         self.notifManager = NotificationManager(eventManagerWrapper)
 
@@ -109,18 +113,20 @@ class RadioTray(object):
 
 
         # start dbus facade
-        dbus = DbusFacade(self.provider, self.mediator)
+        _dbus = DbusFacade(self.provider, self.mediator) # just created, never used TODO check it
         #dbus_mpris = mpris.RadioTrayMpris(self.provider, self.mediator)
 
     #load plugin manager
-        self.pluginManager = PluginManager(eventManagerWrapper, eventSubscriber, self.provider, self.cfg_provider, self.mediator, tooltipManager, self.systray.getPluginMenu())
+        self.pluginManager = PluginManager(eventManagerWrapper, eventSubscriber,
+            self.provider, self.cfg_provider, self.mediator, tooltipManager,
+            self.systray.getPluginMenu())
         self.systray.setPluginManager(self.pluginManager)
         self.pluginManager.discoverPlugins()
         self.pluginManager.activatePlugins()
 
-        if(url != None):
-            if (url == "--resume"):
-                self.mediator.playLast()                
+        if url is not None:
+            if url == "--resume":
+                self.mediator.playLast()
             else:
                 self.mediator.playUrl(url)
         # start app
@@ -132,14 +138,14 @@ class RadioTray(object):
         if not os.path.exists(USER_CFG_PATH):
             #self.logger.info("user's directory created")
             os.mkdir(USER_CFG_PATH)
-            
+
         if not os.path.exists(USER_PLUGIN_PATH):
             os.mkdir(USER_PLUGIN_PATH)
-        
+
         self.configLogging()
-        
+
         self.logger.debug("Loading configuration...")
-        
+
         self.filename = os.path.join(USER_CFG_PATH, CFG_NAME)
 
         self.cfg_filename = os.path.join(USER_CFG_PATH, OPTIONS_CFG_NAME)
@@ -154,7 +160,9 @@ class RadioTray(object):
             oldfilename = os.path.join(OLD_USER_CFG_PATH, CFG_NAME)
             if os.access(oldfilename, os.R_OK|os.W_OK):
 
-                self.logger.info('Found old bookmark configuration and moved it to new location: %s', USER_CFG_PATH)
+                self.logger.info(
+                    'Found old bookmark configuration and moved it to new location: %s',
+                     USER_CFG_PATH)
                 move(oldfilename, self.filename)
                 os.rmdir(OLD_USER_CFG_PATH)
 
@@ -190,7 +198,7 @@ def main(argv):
     sys.path.insert(0, basedir)
     os.chdir(basedir)
 
-    if(len(argv) == 1):
+    if len(argv) == 1:
         print("Trying to load URL: " + argv[0])
 
         try:
@@ -212,4 +220,4 @@ def main(argv):
         RadioTray()
 
 if __name__ == "__main__":
-        radio = RadioTray()
+    radio = RadioTray()

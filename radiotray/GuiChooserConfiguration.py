@@ -18,6 +18,7 @@
 #
 ##########################################################################
 import sys
+import logging
 
 try:
     import gi
@@ -27,18 +28,14 @@ except:
 try:
     from gi.repository import Gtk
     #import Gtk.glade
-    import os
 except Exception as e:
     print(e)
     sys.exit(1)
 
-from .lib.common import APP_ICON_ON
 from .lib import utils
-from .lib import i18n
-import uuid
-import logging
 
-class GuiChooserConfiguration(object):
+
+class GuiChooserConfiguration:
 
     def __init__(self):
         gladefile = utils.load_ui_file("configGui.glade")
@@ -51,15 +48,14 @@ class GuiChooserConfiguration(object):
     def run(self):
         result = self.dialog.run()
         self.dialog.hide()
-        
+
         #user clicks cancel
         if result == 0:
-            exit(0)
+            sys.exit(0)
 
-        if(self.rb_systray.get_active()):
+        if self.rb_systray.get_active():
             self.log.info('user chose notification area')
             return "systray"
         else:
             self.log.info('user chose app indicator')
             return "appindicator"
-

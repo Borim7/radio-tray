@@ -26,18 +26,18 @@ class Context:
     UNKNOWN_RADIO = C_("Unknown radio specified by URL", "Unknown radio")
     station = None
     state = None
-    
+
     def __init__(self):
         self.resetSongInfo()
 
-    def resetSongInfo(self):       
+    def resetSongInfo(self):
         self.url = ""
         self.title = ""
         self.artist = None
         self.album = None
-    
+
     def getSongInfo(self):
-        if(self.title and len(self.title) > 0 and self.artist and len(self.artist) > 0):
+        if self.title and len(self.title) > 0 and self.artist and len(self.artist) > 0:
             return self.artist + " - " + self.title
         elif(self.title and len(self.title) > 0):
             return self.title
@@ -45,4 +45,3 @@ class Context:
             return self.artist
         else:
             return 'Playing'
-            

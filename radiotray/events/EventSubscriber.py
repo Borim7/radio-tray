@@ -22,19 +22,19 @@
 class EventSubscriber:
 
     def __init__(self, eventManager):
-    
+
         self.eventManager = eventManager
 
     def bind(self, event, callback):
-    
+
         observersList = self.eventManager.getObserversMap()[event]
         observersList.append(callback)
-        
-        
+
+
     def unbind(self, event, observer):
-    
+
         observersList = self.eventManager.getObserversMap()[event]
         try:
             observersList.remove(observer)
-        except:
+        except ValueError:
             print("no observer in list")

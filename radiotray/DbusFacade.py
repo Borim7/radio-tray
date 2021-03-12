@@ -41,8 +41,8 @@ class DbusFacade(dbus.service.Object):
     def getCurrentRadio(self):
         if self.mediator.isPlaying():
             return self.mediator.getContext().station
-        else:
-            return self.mediator.getContext().station + " (not playing)"
+
+        return self.mediator.getContext().station + " (not playing)"
 
     @dbus.service.method('net.sourceforge.radiotray')
     def playRadio(self, radioName):

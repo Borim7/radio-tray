@@ -18,15 +18,17 @@
 #
 ##########################################################################
 import sys
-from .lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF, APP_INDICATOR_ICON_CONNECT, IMAGE_PATH
+import textwrap
+import logging
+
+from .lib.common import APPNAME, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF, APP_INDICATOR_ICON_CONNECT, IMAGE_PATH
 try:
     from gi.repository import Gtk
     #import Gtk.glade
-except Exception as e:
+except ImportError as e:
     print(e)
     sys.exit(1)
-import textwrap
-import logging
+
 
 # This class handles the gui interface for the Ubuntu's app indicator API
 class AppIndicatorGui:
@@ -72,7 +74,7 @@ class AppIndicatorGui:
     def build_app_indicator_menu(self, menu):
 
         # config menu
-        if self.turnOnOff == None:
+        if self.turnOnOff is None:
             if not self.mediator.context.station:
                 self.turnOnOff = Gtk.MenuItem(_("Turned Off"))
                 self.turnOnOff.set_sensitive(False)
@@ -83,14 +85,14 @@ class AppIndicatorGui:
             self.turnOnOff.connect('activate', self.handler.on_turn_on_off)
 
         # stream metadata info
-        if self.metadata_menu_item == None:
+        if self.metadata_menu_item is None:
             self.metadata_menu_item = Gtk.MenuItem("Idle")
             self.metadata_menu_item.set_sensitive(False)
 
         # if self.sleep_timer_menu_item == None:
         #     self.sleep_timer_menu_item = Gtk.CheckMenuItem(_("Sleep Timer"))
 
-        if self.preferences_menu == None:
+        if self.preferences_menu is None:
             self.preferences_menu = Gtk.ImageMenuItem.new_from_stock(Gtk.STOCK_PREFERENCES, None)
             self.preferences_menu.set_always_show_image(True)
 
@@ -118,7 +120,7 @@ class AppIndicatorGui:
         # build preferences
         menu.append(self.preferences_menu)
 
-        if self.perferences_submenu == None:
+        if self.perferences_submenu is None:
             self.perferences_submenu = Gtk.Menu()
             self.preferences_menu.set_submenu(self.perferences_submenu)
             #self.perferences_submenu.append(Gtk.MenuItem())
@@ -126,7 +128,7 @@ class AppIndicatorGui:
             self.perferences_submenu.append(menu_reload_bookmarks)
 
         # plugins submenu
-        if self.menu_plugins_item == None:
+        if self.menu_plugins_item is None:
             self.menu_plugins_item = Gtk.MenuItem("Plugins")
             self.menu_plugins = Gtk.Menu()
             self.menu_plugins.append(menu_config_plugin)
@@ -192,14 +194,14 @@ class AppIndicatorGui:
 
         state = data['state']
 
-        if(state == 'playing'):
+        if state == 'playing':
             station = data['station']
             self.turnOnOff.set_label(C_('Turns off the current radio.', 'Turn Off "%s"') % station)
             self.turnOnOff.set_sensitive(True)
 
             self.app_indicator.set_icon(APP_INDICATOR_ICON_ON)
 
-        elif(state == 'paused'):
+        elif state == 'paused':
             if not self.mediator.context.station:
                 self.turnOnOff.set_label(_('Turned Off'))
                 self.turnOnOff.set_sensitive(False)
@@ -209,7 +211,7 @@ class AppIndicatorGui:
 
             self.app_indicator.set_icon(APP_INDICATOR_ICON_OFF)
 
-        elif(state == 'connecting'):
+        elif state == 'connecting':
             station = data['station']
             self.turnOnOff.set_sensitive(True)
             self.turnOnOff.set_label(C_('Turns off the current radio.', 'Turn Off "%s"') % station)
@@ -224,8 +226,8 @@ class AppIndicatorGui:
         songInfo = self.mediator.getContext().getSongInfo()
         volume = self.mediator.getVolume()
 
-        if (self.mediator.getContext().state == 'playing'):
-            if(songInfo):
+        if self.mediator.getContext().state == 'playing':
+            if songInfo:
                 otherInfo = "(vol: %s%%)" % (volume)
 
                 # don't break volume info...

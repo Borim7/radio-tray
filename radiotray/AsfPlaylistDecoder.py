@@ -17,9 +17,10 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from .lib.common import getDefaultHttpHeader
 import logging
 import requests
+from .lib.common import getDefaultHttpHeader
+
 
 class AsfPlaylistDecoder:
 
@@ -30,13 +31,15 @@ class AsfPlaylistDecoder:
 
     def isStreamValid(self, contentType, firstBytes):
 
-        if('video/x-ms-asf' in contentType and firstBytes.strip().lower().startswith(b'[reference]')):
+        if('video/x-ms-asf' in contentType and
+            firstBytes.strip().lower().startswith(b'[reference]')):
+
             self.log.info('Stream is readable by ASF Playlist Decoder')
             return True
         else:
             return False
 
-        
+
     def extractPlaylist(self,  url):
 
         self.log.info('Downloading playlist..')
@@ -50,15 +53,14 @@ class AsfPlaylistDecoder:
         lines = resp.text.split("\n")
         for line in lines:
 
-            if (line.startswith("Ref") == True):
+            if line.startswith("Ref"):
 
                 fields = line.split("=", 1)
                 tmp = fields[1].strip()
 
-                if (tmp.endswith("?MSWMExt=.asf")):
+                if tmp.endswith("?MSWMExt=.asf"):
                     playlist.append(tmp.replace("http", "mms"))
                 else:
                     playlist.append(tmp)
-         
-        return playlist
 
+        return playlist
