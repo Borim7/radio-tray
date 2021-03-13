@@ -18,19 +18,35 @@
 #
 ##########################################################################
 
+import sys
+
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+    from gi.repository import GObject
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
+
 from radiotray.Plugin import Plugin
-from radiotray.lib.common import APPNAME, APPVERSION, APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF
-from gi.repository import Gtk
-from gi.repository import GObject
+from radiotray.lib.common import APP_ICON_ON
+
 
 class SleepTimerPlugin(Plugin):
 
     def __init__(self):
-        super(SleepTimerPlugin, self).__init__()
+        super().__init__()
+
+        self.sleep_timer_id = None
+        self.min_to_sleep = 0
+        self.ignore_toggle = False
+        self.min_to_sleep_selected = None
 
 
-    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider, mediator, tooltip):
-    
+    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider,
+        mediator, tooltip):
+
         self.name = name
         self.eventManagerWrapper = eventManagerWrapper
         self.eventSubscriber = eventSubscriber
@@ -49,9 +65,9 @@ class SleepTimerPlugin(Plugin):
         self.sleep_timer_id = None
         self.min_to_sleep = 0
         self.ignore_toggle = False
-        
+
         self.min_to_sleep_selected = self.cfgProvider.getConfigValue("sleep_timer")
-        if self.min_to_sleep_selected == None:
+        if self.min_to_sleep_selected is None:
             self.min_to_sleep_selected = 15
             self.cfgProvider.setConfigValue("sleep_timer", str(self.min_to_sleep_selected))
         else:
@@ -62,38 +78,38 @@ class SleepTimerPlugin(Plugin):
         return self.name
 
     def on_sleep_timer(self):
-        self.min_to_sleep-=1       
-                
+        self.min_to_sleep-=1
+
         if self.min_to_sleep == 0:
             # set menu state
-            self.ignore_toggle = True       
-            self.menuItem.set_active(False)            
+            self.ignore_toggle = True
+            self.menuItem.set_active(False)
             self.ignore_toggle = False
-            
+
             self.sleep_timer_id = None
             self.mediator.stop()
             self.eventManagerWrapper.notify(_("Sleep Timer"), _("Sleep timer expired"))
-            self.tooltip.update()                                            
+            self.tooltip.update()
             return False
-        
+
         self.tooltip.update()
         return True
-                
-    def on_sleep_menu(self, menu_item):        
-                                                         
+
+    def on_sleep_menu(self, menu_item):
+
         if self.ignore_toggle:
             return
-                
+
         state = menu_item.get_active()
-        
+
         if state:
-            if self.sleep_timer_id == None:
-                
+            if self.sleep_timer_id is None:
+
                 sleep_timer_val = self.get_sleep_timer_value(self.min_to_sleep_selected)
 
                 if sleep_timer_val > 0:
                     self.start_sleep_timer(sleep_timer_val, True)
-                    self.cfg_provider.setConfigValue("sleep_timer", str(sleep_timer_val))
+                    self.cfgProvider.setConfigValue("sleep_timer", str(sleep_timer_val))
                 else:
                     state = False
         else:
@@ -102,12 +118,12 @@ class SleepTimerPlugin(Plugin):
         # set menu state
         self.ignore_toggle = True
         menu_item.set_active(state)
-        self.ignore_toggle = False                
-        self.updateTooltip()
+        self.ignore_toggle = False
+        self.tooltip.update()
 
 
     def populate_tooltip(self):
-        if self.sleep_timer_id != None:
+        if self.sleep_timer_id is not None:
             return _("Sleep: %s min") % str(self.min_to_sleep)
         else:
             return None
@@ -115,14 +131,15 @@ class SleepTimerPlugin(Plugin):
     def start_sleep_timer(self, interval, display_msg):
         self.sleep_timer_id = GObject.timeout_add(60000, self.on_sleep_timer)
         self.min_to_sleep = interval
-        self.min_to_sleep_selected = interval        
-        if display_msg:        
-            self.eventManagerWrapper.notify(_("Sleep Timer"), _("%s minute sleep timer started") % str(interval))            
-    
+        self.min_to_sleep_selected = interval
+        if display_msg:
+            self.eventManagerWrapper.notify(_("Sleep Timer"),
+                _("%s minute sleep timer started") % str(interval))
+
     def stop_sleep_timer(self, display_msg):
         GObject.source_remove(self.sleep_timer_id)
-        self.sleep_timer_id = None  
-        if display_msg:                   
+        self.sleep_timer_id = None
+        if display_msg:
             self.eventManagerWrapper.notify(_("Sleep Timer"), _("Sleep timer stopped"))
 
 
@@ -130,28 +147,29 @@ class SleepTimerPlugin(Plugin):
 
         #Gdk.threads_enter()
 
-        dialog = Gtk.Dialog(_("Edit Sleep Timer"), None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
-                        
-        entry = Gtk.Entry(4)       
-        entry.set_text(str(default_value)) 
+        dialog = Gtk.Dialog(_("Edit Sleep Timer"), None,
+            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+
+        entry = Gtk.Entry(4)
+        entry.set_text(str(default_value))
         hbox = Gtk.HBox()
         hbox.pack_start(Gtk.Label(_("Minutes:", True, True, 0)), False, 5, 5)
         hbox.pack_end(entry, True, True, 5)
         dialog.vbox.pack_end(hbox, True, True, 20)
         dialog.set_icon_from_file(APP_ICON_ON)
         dialog.show_all()
-        
+
         ret = dialog.run()
-                        
+
         sleep_timer_value = 0
-        
+
         if ret == Gtk.ResponseType.ACCEPT:
             if entry.get_text().isdigit():
                 sleep_timer_value = int(entry.get_text())
-                
+
         dialog.destroy()
-        
+
         #Gdk.threads_leave()
         return sleep_timer_value
 
@@ -159,12 +177,12 @@ class SleepTimerPlugin(Plugin):
 
         if self.ignore_toggle:
             return
-                
+
         state = self.menuItem.get_active()
-        
+
         if state:
-            if self.sleep_timer_id == None:
-                
+            if self.sleep_timer_id is None:
+
                 sleep_timer_val = self.get_sleep_timer_value(self.min_to_sleep_selected)
 
                 if sleep_timer_val > 0:
@@ -178,9 +196,9 @@ class SleepTimerPlugin(Plugin):
         # set menu state
         self.ignore_toggle = True
         self.menuItem.set_active(state)
-        self.ignore_toggle = False                
+        self.ignore_toggle = False
         self.tooltip.update()
-    
+
 
     def hasMenuItem(self):
         return True

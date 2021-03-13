@@ -17,23 +17,27 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from radiotray.events.EventSubscriber import EventSubscriber
+import os
+
 from radiotray.events.EventManager import EventManager
 from radiotray.Plugin import Plugin
 from radiotray.lib import utils
 from radiotray.lib.common import SYSTEM_PLUGIN_PATH, USER_PLUGIN_PATH
-from gi.repository import Gtk
-import os
+
 
 class HistoryPlugin(Plugin):
 
     def __init__(self):
-        super(HistoryPlugin, self).__init__()
+        super().__init__()
+
+        self.gladefile = None
+        self.text = None
+        self.window = None
+        self.last_title = 'none'
 
 
     def getName(self):
         return self.name
-
 
 
     def activate(self):
@@ -50,14 +54,14 @@ class HistoryPlugin(Plugin):
         self.window = self.gladefile.get_object("dialog1")
         self.last_title = 'none'
 
-        if (self.window):
+        if self.window:
             #dic = { "on_close_clicked" : self.on_close_clicked}
             self.gladefile.connect_signals(self)
 
 
     def on_song_changed(self, data):
 
-        if('title' in list(data.keys())):
+        if 'title' in list(data.keys()):
             title = data['title']
             if title != self.last_title:
                 self.last_title = title

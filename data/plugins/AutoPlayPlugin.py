@@ -17,21 +17,15 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from radiotray.events.EventSubscriber import EventSubscriber
-from radiotray.events.EventManager import EventManager
+
 from radiotray.Plugin import Plugin
-#from gi.repository import Gtk
-import time
+
 
 class AutoPlayPlugin(Plugin):
-
-    def __init__(self):
-        super(AutoPlayPlugin, self).__init__()
 
     def activate(self):
         self.mediator.playLast()
 
     def on_menu(self, data):
         # empty method needed to avoid crash, Plugin class does not provide a default
-        return
-
+        pass

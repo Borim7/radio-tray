@@ -19,9 +19,19 @@
 ##########################################################################
 
 # author Mark F  Jan 2013
-from radiotray.Plugin import Plugin
-from gi.repository import Gtk
 import random
+import sys
+
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
+
+from radiotray.Plugin import Plugin
+
 
 class StationSwitcherPlugin(Plugin):
 
@@ -33,83 +43,91 @@ class StationSwitcherPlugin(Plugin):
     # self.cfgProvider            = cfgProvider
     # self.mediator               = mediator
     # self.tooltip                = tooltip
-        
+
     def __init__(self):
         super(StationSwitcherPlugin, self).__init__()
         self.shuffle = False   # way to set this property from RadioTray not implemented yet
 
     def getName(self):
         return self.name
-        
+
     def activate(self):
-        # only Next >> button added to avoid cluttering menu.  Play previous can be triggered using other means
+        # only Next >> button added to avoid cluttering menu.
+        # Play previous can be triggered using other means
         nextMenuItem = Gtk.MenuItem("Next >>")
-        
+
         # locate the turn on/off menu item and add next button after
         i = 0
         insertIndex = 0
         for child in self.tooltip.gui.radioMenu.get_children():
             if not isinstance(child, Gtk.SeparatorMenuItem):
-                if child.get_label().startswith("Turn"): 
+                if child.get_label().startswith("Turn"):
                     insertIndex = i+1
                     break
-                    # break statement is required due to bug/feature in Gtk.  Examining MenuItem labels on 'separators' causes
-                    # them not to be displayed correctly.  If gui classes are modified to use SeparatorMenuItem break can be removed 
+                    # break statement is required due to bug/feature in Gtk.
+                    # Examining MenuItem labels on 'separators' causes
+                    # them not to be displayed correctly.  If gui classes are modified to
+                    # use SeparatorMenuItem break can be removed
             i+=1
-            
+
         self.tooltip.gui.radioMenu.insert(nextMenuItem,insertIndex)
         nextMenuItem.connect('activate', self.on_next)
-        nextMenuItem.show()    
+        nextMenuItem.show()
 
     def on_next(self,data):
         self.playNextRadio()
-        
+
     def playPreviousRadio(self):
         self.mediator.play(self.getPreviousRadio())
-        
+
     def playNextRadio(self):
         self.mediator.play(self.getNextRadio())
 
     def getNextRadio(self):
-        if self.shuffle: return self.getRandomRadio()
-        
+        if self.shuffle:
+            return self.getRandomRadio()
+
         allRadios = self.provider.listRadioNames()
         lastStation = self.mediator.cfg_provider.getConfigValue("last_station")
         lastStationIndex = allRadios.index(lastStation)
 
-        if lastStationIndex==len(allRadios)-1: nextStationIndex=0
-        else: nextStationIndex=lastStationIndex+1
-        
+        if lastStationIndex == len(allRadios)-1:
+            nextStationIndex=0
+        else:
+            nextStationIndex=lastStationIndex+1
+
         return allRadios[nextStationIndex]
 
     def getPreviousRadio(self):
-        if self.shuffle: return self.getRandomRadio()
-        
+        if self.shuffle:
+            return self.getRandomRadio()
+
         allRadios = self.provider.listRadioNames()
         lastStation = self.mediator.cfg_provider.getConfigValue("last_station")
         lastStationIndex = allRadios.index(lastStation)
 
-        if lastStationIndex==0: previousStationIndex=len(allRadios)-1
-        else: previousStationIndex=lastStationIndex-1
-        
+        if lastStationIndex == 0:
+            previousStationIndex = len(allRadios)-1
+        else:
+            previousStationIndex = lastStationIndex-1
+
         return allRadios[previousStationIndex]
-    
+
     def getRandomRadio(self):
-        
+
         allRadios = self.provider.listRadioNames()
         lastStation = self.mediator.cfg_provider.getConfigValue("last_station")
         lastStationIndex = allRadios.index(lastStation)
 
         randomStationIndex = lastStationIndex
-        while (randomStationIndex==lastStationIndex):
+        while randomStationIndex == lastStationIndex:
             randomStationIndex = random.randint(0, len(allRadios)-1)
-        
+
         return allRadios[randomStationIndex]
-    
+
     def hasMenuItem(self):
         return False
-    
+
     def on_menu(self, data):
         #plugin config gui goes here.  Need to add option for random station select
-        print("")
-
+        pass

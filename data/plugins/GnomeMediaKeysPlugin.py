@@ -18,17 +18,21 @@
 #
 ##########################################################################
 
-from radiotray.Plugin import Plugin
 import dbus
+from radiotray.Plugin import Plugin
 
 class GnomeMediaKeysPlugin(Plugin):
 
     def __init__(self):
         super(GnomeMediaKeysPlugin, self).__init__()
 
+        self.bus = None
+        self.bus_object = None
 
-    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider, mediator, tooltip):
-    
+
+    def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider,
+        mediator, tooltip):
+
         self.name = name
         self.eventManagerWrapper = eventManagerWrapper
         self.eventSubscriber = eventSubscriber
@@ -45,20 +49,22 @@ class GnomeMediaKeysPlugin(Plugin):
     def activate(self):
         try:
             self.bus = dbus.SessionBus()
-            self.bus_object = self.bus.get_object('org.gnome.SettingsDaemon', '/org/gnome/SettingsDaemon/MediaKeys')
-            self.bus_object.GrabMediaPlayerKeys("RadioTray", 0, dbus_interface='org.gnome.SettingsDaemon.MediaKeys')
+            self.bus_object = self.bus.get_object('org.gnome.SettingsDaemon',
+                '/org/gnome/SettingsDaemon/MediaKeys')
+            self.bus_object.GrabMediaPlayerKeys("RadioTray", 0,
+                dbus_interface='org.gnome.SettingsDaemon.MediaKeys')
             self.bus_object.connect_to_signal('MediaPlayerKeyPressed', self.handle_mediakey)
-        except:
+        except dbus.DBusException:
             print("Could not bind to Gnome for Media Keys")
-            
-            
+
+
     def handle_mediakey(self, *mmkeys):
         for key in mmkeys:
             if key == "Play":
-                if (self.mediator.isPlaying()):
+                if self.mediator.isPlaying():
                     self.mediator.stop()
                 else:
                     self.mediator.playLast()
             elif key == "Stop":
-                if (self.mediator.isPlaying()):
+                if self.mediator.isPlaying():
                     self.mediator.stop()

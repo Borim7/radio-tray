@@ -17,26 +17,26 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
-from radiotray.events.EventSubscriber import EventSubscriber
+import time
+
 from radiotray.events.EventManager import EventManager
 from radiotray.Plugin import Plugin
-from gi.repository import Gtk
-import time
+
 
 # Basic example of a plugin
 class HelloWorldPlugin(Plugin):
 
     def __init__(self):
-        super(HelloWorldPlugin, self).__init__()
-        
+        super().__init__()
+
         print("started")
-        
+
 
     def getName(self):
         return self.name
 
     def activate(self):
-        
+
         self.eventSubscriber.bind(EventManager.SONG_CHANGED, self.on_song_changed)
         self.tooltip.addSource(self.populate_tooltip)
         time.sleep(20)
