@@ -18,10 +18,8 @@
 #
 ##########################################################################
 import logging
-import urllib.request
-import urllib.error
-import urllib.parse
-from .lib.common import USER_AGENT
+import requests
+from .lib.common import getDefaultHttpHeader
 
 
 class RamPlaylistDecoder:
@@ -29,6 +27,7 @@ class RamPlaylistDecoder:
     def __init__(self):
         self.log = logging.getLogger('radiotray')
         self.log.debug('RAM playlist decoder')
+
 
     def isStreamValid(self, contentType, firstBytes):
 
@@ -39,20 +38,15 @@ class RamPlaylistDecoder:
             return False
 
 
-
     def extractPlaylist(self,  url):
         self.log.info('Downloading playlist...')
 
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        f = urllib.request.urlopen(req)
-        strData = f.read()
-        f.close()
+        resp = requests.get(url, headers=getDefaultHttpHeader())
 
         self.log.info('Playlist downloaded')
         self.log.info('Decoding playlist...')
 
-        lines = strData.splitlines()
+        lines = resp.text.splitlines()
         playlist = []
 
         for line in lines:
