@@ -1,18 +1,34 @@
 # RadioTray
 
-This is a simple music streaming player that lives on the system tray. By clicking on the RadioTray icon, 
-you'll be presented with a list of pre-configured online radios. By selecting one of those radios, it 
+This is a simple music streaming player that lives on the system tray. By clicking on the RadioTray icon,
+you'll be presented with a list of pre-configured online radios. By selecting one of those radios, it
 will start playing.
 
 Right now, Radio Tray bundles with pre-configured radios. But you can and should add more manually.
 
-Adding online radios to the list is very simple. By right-clicking the RadioTray icon and selecting 
+Adding online radios to the list is very simple. By right-clicking the RadioTray icon and selecting
 "Config radios...", you may add the name and URL of an online radio.
 This version allows you to add direct URLs (to media streams or files) and URLs pointing at playlist formats (pls, m3u, asx, wax, wvx).
 
 
 
 RadioTray was written in Python and uses gtk and gstreamer libraries (you'll need these to run RadioTray).
+
+## Requirements
+- python3
+- python3-gst-1.0
+- python3-gi
+- python3-lxml
+- python3-dbus
+- python3-xdg
+- gir1.2-appindicator3-0.1
+
+## Build requirements
+- python3-setuptools
+- python3-distutils-extra
+- dh-python
+- cdbs
+- debhelper
 
 ## Installation
 To install, you can run `python setup.py install`. Note: there is no uninstall script.
