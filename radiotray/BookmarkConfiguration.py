@@ -24,13 +24,10 @@ import logging
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except ImportError:
-    pass
-try:
-    from gi.repository import Gtk, Gdk
-    #import Gtk.glade
-except ImportError as e:
-    print(e)
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
     sys.exit(1)
 
 from .lib.common import APP_ICON_ON

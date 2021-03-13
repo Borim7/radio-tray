@@ -19,13 +19,14 @@
 ##########################################################################
 import sys
 import logging
+
 try:
     import gi
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
     from gi.repository import Gdk
-except Exception as e:
-    print(e)
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
     sys.exit(1)
 
 from .BookmarkConfiguration import BookmarkConfiguration

@@ -18,20 +18,17 @@
 #
 ##########################################################################
 import logging
+import sys
 
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except ImportError:
-    pass
-try:
     from gi.repository import Gtk
-    #import Gtk.glade
     from gi.repository import GObject
     GObject.threads_init()
-
-except ImportError as e:
-    print(e)
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
 
 from .lib import utils
 from .lib.common import APP_ICON_ON

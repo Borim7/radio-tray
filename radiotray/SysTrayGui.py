@@ -19,12 +19,13 @@
 ##########################################################################
 import html
 import sys
+
 try:
     import gi
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
-except ImportError as e:
-    print(e)
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
     sys.exit(1)
 
 from .lib.common import APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT

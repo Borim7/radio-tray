@@ -20,7 +20,15 @@
 
 import threading
 import logging
-from gi.repository import Gtk
+import sys
+
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
 
 # This class should be extended by plugins implementations
 class Plugin(threading.Thread):
@@ -28,6 +36,14 @@ class Plugin(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.log = logging.getLogger('radiotray')
+
+        self.eventManagerWrapper = None
+        self.eventSubscriber = None
+        self.provider = None
+        self.cfgProvider = None
+        self.mediator = None
+        self.tooltip = None
+        self.menuItem = None
 
     def initialize(self, name, eventManagerWrapper, eventSubscriber, provider, cfgProvider,
         mediator, tooltip):

@@ -20,18 +20,6 @@
 import sys
 import logging
 
-try:
-    import gi
-    gi.require_version("Gtk", "3.0")
-except:
-    pass
-try:
-    from gi.repository import Gtk
-    #import Gtk.glade
-except Exception as e:
-    print(e)
-    sys.exit(1)
-
 from .lib import utils
 
 

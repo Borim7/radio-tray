@@ -26,9 +26,10 @@ from lxml import etree
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except ImportError:
-    pass
-from gi.repository import Gtk
+    from gi.repository import Gtk
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
 
 
 class XmlDataProvider:

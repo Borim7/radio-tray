@@ -18,18 +18,15 @@
 #
 ##########################################################################
 from os.path import exists, join
+import sys
 
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-except ImportError:
-    pass
-
-try:
     from gi.repository import Gtk
-except ImportError as e:
-    print(str(e))
-    raise SystemExit
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
 
 from . import common
 

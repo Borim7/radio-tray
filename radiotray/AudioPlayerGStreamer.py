@@ -18,21 +18,21 @@
 #
 ##########################################################################
 import logging
+import sys
 
 try:
     import gi
     gi.require_version("Gtk", "3.0")
     gi.require_version('Gst', '1.0')
-except ImportError:
-    pass
-try:
+
     from gi.repository import GLib
     from gi.repository import GObject
     GObject.threads_init()
     from gi.repository import Gst
     Gst.init(None)
-except ImportError as e:
-    print(e)
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
 
 from .StreamDecoder import StreamDecoder
 from .lib.common import USER_AGENT

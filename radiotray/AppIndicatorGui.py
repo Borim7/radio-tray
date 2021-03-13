@@ -21,13 +21,15 @@ import sys
 import textwrap
 import logging
 
-from .lib.common import APPNAME, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF, APP_INDICATOR_ICON_CONNECT, IMAGE_PATH
 try:
+    import gi
+    gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
-    #import Gtk.glade
-except ImportError as e:
-    print(e)
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
     sys.exit(1)
+
+from .lib.common import APPNAME, APP_INDICATOR_ICON_ON, APP_INDICATOR_ICON_OFF, APP_INDICATOR_ICON_CONNECT, IMAGE_PATH
 
 
 # This class handles the gui interface for the Ubuntu's app indicator API

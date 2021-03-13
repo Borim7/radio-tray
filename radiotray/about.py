@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-from gi.repository import Gtk, GdkPixbuf
+import sys
+
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk, GdkPixbuf
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
+
 import radiotray.lib.common as common
 
 TRANSLATORS = _("translator-credits")
