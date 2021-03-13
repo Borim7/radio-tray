@@ -17,6 +17,7 @@
 # along with Radio Tray.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##########################################################################
+import html
 import sys
 try:
     import gi
@@ -27,7 +28,6 @@ except ImportError as e:
     sys.exit(1)
 
 from .lib.common import APP_ICON_ON, APP_ICON_OFF, APP_ICON_CONNECT
-from .lib.utils import html_escape
 
 # This class handles the gui for the systray mode
 class SysTrayGui:
@@ -220,9 +220,8 @@ class SysTrayGui:
 
 
     def getCommonTooltipData(self):
-
-        radio = html_escape(self.mediator.getContext().station)
-        songInfo = html_escape(self.mediator.getContext().getSongInfo())
+        radio = html.escape(self.mediator.getContext().station)
+        songInfo = html.escape(self.mediator.getContext().getSongInfo())
         volume = self.mediator.getVolume()
 
         if self.mediator.getContext().state == 'playing':
