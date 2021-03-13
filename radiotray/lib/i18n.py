@@ -34,3 +34,4 @@ except ImportError:
         "internationalization will be used."), file=sys.stderr)
     builtins.__dict__['_'] = lambda x: x
     builtins.__dict__['ngettext'] = lambda x, y, n: (n == 1) and x or y
+    builtins.__dict__['C_'] = lambda ctx,s: s
