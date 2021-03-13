@@ -61,8 +61,9 @@ class AudioPlayerGStreamer:
         self.player.set_property("video-sink", fakesink)
 
         #buffer size
-        if cfg_provider._settingExists("buffer_size"):
-            bufferSize = int(cfg_provider.getConfigValue("buffer_size"))
+        bufferSizeCfg = cfg_provider.getConfigValue("buffer_size")
+        if bufferSizeCfg is not None:
+            bufferSize = int(bufferSizeCfg)
             if bufferSize > 0:
                 self.log.debug("Setting buffer size to %i", bufferSize)
                 self.player.set_property("buffer-size", bufferSize)

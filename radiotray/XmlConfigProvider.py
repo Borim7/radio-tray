@@ -94,6 +94,7 @@ class XmlConfigProvider:
 
 
     def _settingExists(self, name):
+        """Return the requested setting or None if it does not exists"""
         setting = None
 
         try:
