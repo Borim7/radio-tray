@@ -61,6 +61,7 @@ class StreamDecoder:
 
 
     def getMediaStreamInfo(self, url):
+        resp = None
 
         if not url.startswith("http"):
             self.log.info('Not an HTTP url. Maybe direct stream...')
@@ -86,7 +87,8 @@ class StreamDecoder:
             self.log.warn('No radio stream found. Error: %s', str(e))
             return None
         finally:
-            resp.close()
+            if resp is not None:
+                resp.close()
 
         # detect stream type
         try:
