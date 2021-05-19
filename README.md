@@ -27,7 +27,6 @@ RadioTray was written in Python and uses gtk and gstreamer libraries (you'll nee
 - python3-setuptools
 - python3-distutils-extra
 - dh-python
-- cdbs
 - debhelper
 
 ## Installation

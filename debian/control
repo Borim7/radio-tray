@@ -1,8 +1,7 @@
 Source: radiotray
 Section: sound
 Priority: optional
-Build-Depends: cdbs (>= 0.4.43),
- debhelper (>= 11~),
+Build-Depends: debhelper (>= 11~),
  python3,
  python3-setuptools,
  python3-distutils-extra (>= 2.10),
