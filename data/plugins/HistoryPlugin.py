@@ -40,9 +40,7 @@ class HistoryPlugin(Plugin):
         return self.name
 
 
-    def activate(self):
-        self.eventSubscriber.bind(EventManager.SONG_CHANGED, self.on_song_changed)
-
+    def activate_gtk(self, data):
         if os.path.exists(os.path.join(USER_PLUGIN_PATH, "history.glade")):
             self.gladefile = utils.load_ui_file(os.path.join(USER_PLUGIN_PATH, "history.glade"))
         elif os.path.exists(os.path.join(SYSTEM_PLUGIN_PATH, "history.glade")):
@@ -57,6 +55,11 @@ class HistoryPlugin(Plugin):
         if self.window:
             #dic = { "on_close_clicked" : self.on_close_clicked}
             self.gladefile.connect_signals(self)
+
+
+    def activate(self):
+        self.eventSubscriber.bind(EventManager.SONG_CHANGED, self.on_song_changed)
+        GLib.idle_add(self.activate_gtk, None)
 
 
     def on_song_changed(self, data):

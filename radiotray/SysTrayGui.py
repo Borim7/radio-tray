@@ -46,14 +46,14 @@ class SysTrayGui:
         self.radioMenu = Gtk.Menu()
 
         if not self.mediator.context.station:
-            self.turnOnOff = Gtk.MenuItem(_("Turned Off"), False)
-            self.turnOnOff2 = Gtk.MenuItem(_("Turned Off"), False)
+            self.turnOnOff = Gtk.MenuItem(_("Turned Off"))
+            self.turnOnOff2 = Gtk.MenuItem(_("Turned Off"))
             self.turnOnOff.set_sensitive(False)
             self.turnOnOff2.set_sensitive(False)
         else:
-            self.turnOnOff = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)
+            self.turnOnOff = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station)
             self.turnOnOff.set_sensitive(True)
-            self.turnOnOff2 = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station, False)
+            self.turnOnOff2 = Gtk.MenuItem(_('Turn On "%s"') % self.mediator.context.station)
             self.turnOnOff2.set_sensitive(True)
 
         self.turnOnOff.connect('activate', self.handler.on_turn_on_off)
@@ -72,14 +72,14 @@ class SysTrayGui:
         menu_item1.set_sensitive(self.provider.isBookmarkWritable())
 
         menu_item4 = Gtk.MenuItem(_("Reload Bookmarks"))
-        menu_item3 = Gtk.ImageMenuItem(Gtk.STOCK_ABOUT)
-        menu_item2 = Gtk.ImageMenuItem(Gtk.STOCK_QUIT)
+        menu_item3 = Gtk.ImageMenuItem(Gtk.STOCK_ABOUT, None)
+        menu_item2 = Gtk.ImageMenuItem(Gtk.STOCK_QUIT, None)
         self.menu.append(self.turnOnOff2)
         self.menu.append(separator)
         self.menu.append(menu_item1)
 
         # plugins sub-menu
-        menu_plugins_item = Gtk.MenuItem("Plugins", False)
+        menu_plugins_item = Gtk.MenuItem("Plugins")
         self.menu_plugins = Gtk.Menu()
         menu_plugins_item.set_submenu(self.menu_plugins)
         menu_item5 = Gtk.MenuItem(_("Configure Plugins..."))
@@ -121,7 +121,7 @@ class SysTrayGui:
     def button_press(self,widget,event):
 
         if event.button == 1:
-            self.radioMenu.popup(None, None, Gtk.status_icon_position_menu, 0, event.get_time(), widget)
+            self.radioMenu.popup(None, None, Gtk.StatusIcon.position_menu, widget, 0, event.get_time())
         elif event.button == 2:
             if self.mediator.getContext().state == 'playing':
                 self.mediator.stop()
@@ -129,7 +129,7 @@ class SysTrayGui:
                 if self.mediator.getContext().station:
                     self.mediator.play(self.mediator.getContext().station)
         else:
-            self.menu.popup(None, None, Gtk.status_icon_position_menu, 2, event.get_time(), widget)
+            self.menu.popup(None, None, Gtk.StatusIcon.position_menu, widget, 2, event.get_time())
 
 
     def update_radios(self):
@@ -155,7 +155,7 @@ class SysTrayGui:
         new_user_data = None
 
         if group_name != 'root':
-            group = Gtk.MenuItem(group_name, False)
+            group = Gtk.MenuItem(group_name)
             user_data.append(group)
             new_user_data = Gtk.Menu()
             group.set_submenu(new_user_data)
@@ -172,7 +172,7 @@ class SysTrayGui:
             user_data.append(separator)
             separator.show()
         else:
-            radio = Gtk.MenuItem(radio_name, False)
+            radio = Gtk.MenuItem(radio_name)
             radio.show()
             radio.connect('activate', self.handler.on_start, radio_name)
             user_data.append(radio)

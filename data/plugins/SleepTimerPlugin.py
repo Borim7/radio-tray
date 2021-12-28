@@ -54,7 +54,7 @@ class SleepTimerPlugin(Plugin):
         self.cfgProvider = cfgProvider
         self.mediator = mediator
         self.tooltip = tooltip
-        self.menuItem = Gtk.CheckMenuItem(self.getName(), False)
+        self.menuItem = Gtk.CheckMenuItem(self.getName())
         self.menuItem.connect('activate', self.on_menu)
         self.menuItem.show()
 
