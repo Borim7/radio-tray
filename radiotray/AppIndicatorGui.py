@@ -24,7 +24,7 @@ import logging
 try:
     import gi
     gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk
+    from gi.repository import Gtk, GLib
 except (ImportError, ValueError) as e:
     print(__file__ + ": " + str(e))
     sys.exit(1)
@@ -43,6 +43,14 @@ class AppIndicatorGui:
         self.menu_plugins_item = None
         self.log = logging.getLogger('radiotray')
 
+        self.app_indicator = None
+        self.turnOnOff = None
+        self.metadata_menu_item = None
+        self.perferences_submenu = None
+        self.preferences_menu = None
+        self.radioMenu = None
+        self.menu_plugins = None
+
 
     def buildMenu(self):
 
@@ -50,9 +58,9 @@ class AppIndicatorGui:
             from gi.repository import AppIndicator3
             self.app_indicator = AppIndicator3.Indicator.new(APPNAME, APP_INDICATOR_ICON_OFF , AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
             self.app_indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        except Exception as e:
+        except ImportError as e:
             self.log.debug(e)
-            self.log.warn("Failed to create an Application Indicator!")
+            self.log.warning("Failed to create an Application Indicator!")
             self.app_indicator = None
             return
 
@@ -68,7 +76,7 @@ class AppIndicatorGui:
 
         try:
             self.app_indicator.connect("scroll-event", self.app_indicator_scroll)
-        except:
+        except GLib.Error:
             # not available in this version of app indicator
             self.log.info("App indicator scroll events are not available.")
 
@@ -149,7 +157,7 @@ class AppIndicatorGui:
         menu.show_all()
 
 
-    def app_indicator_scroll(self, indicator, delta, direction):
+    def app_indicator_scroll(self, _indicator, _delta, direction):
         if direction == 0:
             self.mediator.volume_up()
         else:

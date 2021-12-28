@@ -22,4 +22,3 @@ class ConsoleLog:
     def log(self, message):
 
         print(message)
-

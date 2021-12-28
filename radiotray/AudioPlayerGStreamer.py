@@ -82,7 +82,7 @@ class AudioPlayerGStreamer:
         if urlInfo is not None and urlInfo.isPlaylist():
             self.playlist = self.decoder.getPlaylist(urlInfo)
             if len(self.playlist) == 0:
-                self.log.warn('Received empty playlist!')
+                self.log.warning('Received empty playlist!')
                 self.mediator.stop()
                 self.eventManager.notify(EventManager.STATION_ERROR,
                     {'error':"Received empty stream from station"})
@@ -136,7 +136,7 @@ class AudioPlayerGStreamer:
             volume_increment, 0.0))
         self.mediator.updateVolume(self.player.get_property("volume"))
 
-    def on_message(self, bus, message):
+    def on_message(self, _bus, message):
         t = message.type
 
         stru = message.get_structure()
@@ -164,8 +164,8 @@ class AudioPlayerGStreamer:
             self.log.debug("Received MESSAGE_ERROR")
             self.player.set_state(Gst.State.NULL)
             err, debug = message.parse_error()
-            self.log.warn(err)
-            self.log.warn(debug)
+            self.log.warning(err)
+            self.log.warning(debug)
 
             if len(self.playlist)>0:
                 self.playNextStream()
@@ -222,13 +222,13 @@ class AudioPlayerGStreamer:
 
         return True
 
-    def redirect(self, name, value, data):
+    def redirect(self, name, value, _data):
         if name == 'new-location':
             self.start(value)
         return True
 
 
-    def checkTimeout(self, data):
+    def checkTimeout(self, _data):
         self.log.debug("Checking timeout...")
         if self.retrying:
             self.log.info("Timed out. Retrying...")

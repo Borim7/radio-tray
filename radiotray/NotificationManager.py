@@ -66,17 +66,15 @@ class NotificationManager:
             try:
                 resp = requests.get(data['homepage'], headers=getDefaultHttpHeader())
 
-                f = open(ICON_FILE,'wb')
                 try:
-                    f.write(resp.content)
-                except Exception:
-                    self.log.warn('Error saving icon')
-                finally:
-                    f.close()
+                    with open(ICON_FILE,'wb') as f:
+                        f.write(resp.content)
+                except OSError:
+                    self.log.warning('Error saving icon')
 
                 self.eventManagerWrapper.notify_icon(msgTitle, msg, ICON_FILE)
 
-            except Exception:
+            except OSError:
                 traceback.print_exc()
                 self.eventManagerWrapper.notify(msgTitle, msg)
         else:

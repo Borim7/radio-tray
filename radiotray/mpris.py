@@ -39,4 +39,5 @@ class RadioTrayMpris:
         self.bus = dbus.service.BusName(OBJECT_NAME, bus=dbus.SessionBus())
         mpris_root.RadioTrayMprisRoot(mediator, self.bus) # don't need provider
         mpris_player.RadioTrayMprisPlayer(provider, mediator, self.bus)
-        mpris_tracklist.RadioTrayMprisTrackList(self.bus) # actually TrackList doesn't provide anything yet
+        # actually TrackList doesn't provide anything yet
+        mpris_tracklist.RadioTrayMprisTrackList(self.bus)

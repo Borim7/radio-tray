@@ -101,6 +101,6 @@ class XmlConfigProvider:
             setting = self.root.xpath("//option[@name=$var]", var=name)[0]
         except IndexError:
             # Setting wasn't found
-            self.log.warn('Could not find setting with the name "%s".', name)
+            self.log.warning('Could not find setting with the name "%s".', name)
 
         return setting

@@ -29,7 +29,7 @@ class RamPlaylistDecoder:
         self.log.debug('RAM playlist decoder')
 
 
-    def isStreamValid(self, contentType, firstBytes):
+    def isStreamValid(self, contentType, _firstBytes):
 
         if('audio/x-pn-realaudio' in contentType or 'audio/vnd.rn-realaudio' in contentType):
             self.log.info('Stream is readable by RAM Playlist Decoder')

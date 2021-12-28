@@ -74,6 +74,7 @@ class SysTray:
         self.mediator = mediator
         self.eventManager = eventManager
         self.log = logging.getLogger('radiotray')
+        self.pluginManager = None
 
         # initialize data provider
         self.provider = provider
@@ -97,7 +98,7 @@ class SysTray:
 
             self.cfg_provider.setConfigValue("gui_engine", self.gui_engine)
 
-        except Exception:
+        except ImportError:
             self.log.debug('No appindicator support found. Choosing notification area...')
             self.gui_engine = "systray"
 
@@ -125,37 +126,37 @@ class SysTray:
 
 ###### Action Events #######
 
-    def scroll(self,widget, event):
+    def scroll(self, _widget, event):
         if event.direction == Gdk.ScrollDirection.UP:
             self.mediator.volume_up()
 
         if event.direction == Gdk.ScrollDirection.DOWN:
             self.mediator.volume_down()
 
-    def volume_up(self, menu_item):
+    def volume_up(self, _menu_item):
         self.mediator.volume_up()
 
-    def volume_down(self, menu_item):
+    def volume_down(self, _menu_item):
         self.mediator.volume_down()
 
 
-    def on_preferences(self, data):
+    def on_preferences(self, _data):
         config = BookmarkConfiguration(self.provider, self.update_radios)
 
-    def on_quit(self, data):
+    def on_quit(self, _data):
         self.log.info('Exiting...')
         Gtk.main_quit()
 
-    def on_about(self, data):
+    def on_about(self, _data):
         about_dialog(parent=None)
 
-    def on_turn_on_off(self, data):
+    def on_turn_on_off(self, _data):
         if self.mediator.context.state == 'playing' or self.mediator.context.state == 'connecting':
             self.mediator.stop()
         else:
             self.mediator.play(self.mediator.context.station)
 
-    def on_start(self, data, radio):
+    def on_start(self, _data, radio):
         self.mediator.context.resetSongInfo()
         self.mediator.play(radio)
 
@@ -174,7 +175,7 @@ class SysTray:
         Gtk.main()
 
 
-    def reload_bookmarks(self, data):
+    def reload_bookmarks(self, _data):
         self.provider.loadFromFile()
         self.update_radios()
         self.eventManager.notify(EventManager.BOOKMARKS_RELOADED, {})
@@ -188,14 +189,14 @@ class SysTray:
         self.gui.state_changed(data)
         self.updateTooltip()
 
-    def on_volume_changed(self, volume):
+    def on_volume_changed(self, _volume):
         self.updateTooltip()
 
-    def on_song_changed(self, data):
+    def on_song_changed(self, _data):
         self.updateTooltip()
 
 
-    def on_plugin_preferences(self, data):
+    def on_plugin_preferences(self, _data):
         config = PluginConfiguration(self.pluginManager, self.cfg_provider)
 
 

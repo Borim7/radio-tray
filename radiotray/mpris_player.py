@@ -38,14 +38,12 @@ class RadioTrayMprisPlayer(dbus.service.Object):
         """
             Goes to the next element
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME)
     def Prev(self):
         """
             Goes to the previous element
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME)
     def Pause(self):
@@ -85,7 +83,6 @@ class RadioTrayMprisPlayer(dbus.service.Object):
         """
             Toggle the current track repeat
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME, out_signature="(iiii)")
     def GetStatus(self):
@@ -168,7 +165,6 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Sets the playing position (argument must be in [0, <track_length>]
             in milliseconds)
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME, out_signature="i")
     def PositionGet(self):
@@ -184,7 +180,6 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Signal is emitted when the "Media Player" plays another "Track".
             Argument of the signal is the metadata attached to the new "Track"
         """
-        pass
 
     @dbus.service.signal(INTERFACE_NAME, signature="(iiii)")
     def StatusChange(self, struct):
@@ -192,7 +187,6 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Signal is emitted when the status of the "Media Player" change. The
             argument has the same meaning as the value returned by GetStatus.
         """
-        pass
 
     @dbus.service.signal(INTERFACE_NAME)
     def CapsChange(self):
@@ -200,4 +194,3 @@ class RadioTrayMprisPlayer(dbus.service.Object):
             Signal is emitted when the "Media Player" changes capabilities, see
             GetCaps method.
         """
-        pass

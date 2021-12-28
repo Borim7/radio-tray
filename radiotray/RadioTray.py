@@ -48,6 +48,7 @@ from .GuiChooserConfiguration import GuiChooserConfiguration
 class RadioTray:
 
     def __init__(self, url=None):
+        self.logger = None
 
         self.loadConfiguration()
 
@@ -154,7 +155,7 @@ class RadioTray:
 
         if not os.access(self.filename, os.F_OK): # If bookmarks file doesn't exist
 
-            self.logger.warn('bookmarks file could not be found. Using default...')
+            self.logger.warning('bookmarks file could not be found. Using default...')
 
             #check if it exists an old bookmark file, and then move it to the new location
             oldfilename = os.path.join(OLD_USER_CFG_PATH, CFG_NAME)
@@ -173,7 +174,7 @@ class RadioTray:
 
         if not os.access(self.cfg_filename, os.R_OK|os.W_OK):
 
-            self.logger.warn('Configuration file not found. Copying default configuration file to user directory')
+            self.logger.warning('Configuration file not found. Copying default configuration file to user directory')
             copy2(DEFAULT_CONFIG_FILE, self.cfg_filename)
             os.chmod(self.filename, 0o644)
 
@@ -190,7 +191,6 @@ class RadioTray:
 def main(argv):
     dbus.mainloop.glib.threads_init()
 
-    current_path = os.path.realpath(__file__)
     basedir = os.path.dirname(os.path.realpath(__file__))
     if not os.path.exists(os.path.join(basedir, "radiotray.py")):
         if os.path.exists(os.path.join(os.getcwd(), "radiotray.py")):

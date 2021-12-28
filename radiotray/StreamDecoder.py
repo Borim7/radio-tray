@@ -49,11 +49,11 @@ class StreamDecoder:
         try:
             self.url_timeout = cfg_provider.getConfigValue("url_timeout")
             if self.url_timeout is None:
-                self.log.warn("Couldn't find url_timeout configuration")
+                self.log.warning("Couldn't find url_timeout configuration")
                 self.url_timeout = 100
                 cfg_provider.setConfigValue("url_timeout", str(self.url_timeout))
         except Exception:
-            self.log.warn("Couldn't find url_timeout configuration")
+            self.log.warning("Couldn't find url_timeout configuration")
             self.url_timeout = 100
             cfg_provider.setConfigValue("url_timeout", str(self.url_timeout))
 
@@ -78,13 +78,13 @@ class StreamDecoder:
             firstbytes = next(resp.iter_content(500))
 
         except requests.HTTPError as e:
-            self.log.warn('HTTP Error: No radio stream found for %s - %s', url, str(e))
+            self.log.warning('HTTP Error: No radio stream found for %s - %s', url, str(e))
             return None
         except requests.ConnectionError as e:
             self.log.info('No radio stream found for %s', url)
             return None
         except Exception as e:
-            self.log.warn('No radio stream found. Error: %s', str(e))
+            self.log.warning('No radio stream found. Error: %s', str(e))
             return None
         finally:
             if resp is not None:
@@ -96,7 +96,7 @@ class StreamDecoder:
             contentType = metadata["Content-Type"]
             self.log.info('Content-Type: %s', contentType)
 
-        except Exception as e:
+        except LookupError as e:
             self.log.info("Couldn't read content-type. Maybe direct stream...")
             self.log.info('Error: %s',e)
             return UrlInfo(url, False, None)

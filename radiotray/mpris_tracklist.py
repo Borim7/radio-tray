@@ -76,21 +76,18 @@ class RadioTrayMprisTrackList(dbus.service.Object):
         """
             Appends an URI in the TrackList.
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME, in_signature="b")
     def SetLoop(self, loop):
         """
             Sets the player's "repeat" or "loop" setting
         """
-        pass
 
     @dbus.service.method(INTERFACE_NAME, in_signature="b")
     def SetRandom(self, random):
         """
             Sets the player's "random" setting
         """
-        pass
 
     @dbus.service.signal(INTERFACE_NAME, signature="i")
     def TrackListChange(self, num_of_elements):
@@ -103,4 +100,3 @@ class RadioTrayMprisTrackList(dbus.service.Object):
             The argument is the number of elements in the TrackList after the
             change happened.
         """
-        pass

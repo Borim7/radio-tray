@@ -33,7 +33,7 @@ class XspfPlaylistDecoder:
         self.log.debug('XSPF playlist decoder')
 
 
-    def isStreamValid(self, contentType, firstBytes):
+    def isStreamValid(self, contentType, _firstBytes):
 
         if 'application/xspf+xml' in contentType:
             self.log.info('Stream is readable by XSPF Playlist Decoder')

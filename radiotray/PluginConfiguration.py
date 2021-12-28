@@ -72,8 +72,8 @@ class PluginConfiguration:
         self.list.append_column(tvcolumn1)
         self.list.append_column(tvcolumn2)
 
+        # connect signals from gladefile
         if self.window:
-            dic = { "on_close_clicked" : self.on_close_clicked}
             self.wTree.connect_signals(self)
 
 
@@ -100,7 +100,7 @@ class PluginConfiguration:
 
 
 
-    def on_toggle(self, cell, path, model):
+    def on_toggle(self, _cell, path, model):
 
         model[path][0] = not model[path][0]
         name = model[path][1]
@@ -120,7 +120,7 @@ class PluginConfiguration:
         self.log.debug(self.activePlugins)
 
 
-    def on_close_clicked(self, widget):
+    def on_close_clicked(self, _widget):
 
         self.cfgProvider.setConfigList('active_plugins', self.activePlugins)
         self.window.destroy()

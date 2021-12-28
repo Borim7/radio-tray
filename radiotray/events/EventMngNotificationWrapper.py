@@ -18,7 +18,7 @@
 #
 ##########################################################################
 
-from . import EventManager
+# wrapper for `from . import EventManager` but class is not used directly
 
 class EventMngNotificationWrapper:
 

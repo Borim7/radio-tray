@@ -39,6 +39,13 @@ class SysTrayGui:
         self.cfg_provider = cfg_provider
         self.provider = provider
 
+        self.radioMenu = None
+        self.turnOnOff = None
+        self.turnOnOff2 = None
+        self.menu = None
+        self.menu_plugins = None
+        self.icon = None
+
 
     def buildMenu(self):
 

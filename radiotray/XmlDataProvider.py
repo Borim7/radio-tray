@@ -19,6 +19,7 @@
 #
 ##########################################################################
 import os
+import sys
 import logging
 
 from lxml import etree
@@ -112,7 +113,7 @@ class XmlDataProvider:
                 self.saveToFile()
                 return True
 
-            self.log.warn('A group with the name "%s" already exists.', new_group_name)
+            self.log.warning('A group with the name "%s" already exists.', new_group_name)
             return False
 
         self.log.error('Error: a parent group with the name "%s" does not exist.',
@@ -141,7 +142,7 @@ class XmlDataProvider:
                 self.saveToFile()
                 return True
 
-            self.log.warn('A radio with the name "%s" already exists.', name)
+            self.log.warning('A radio with the name "%s" already exists.', name)
         else:
             self.log.error('A group with the name "%s" does not exist.', group_name)
 
@@ -169,7 +170,7 @@ class XmlDataProvider:
             else:
                 radioXml = self._radioExists(newName)
                 if radioXml is not None:
-                    self.log.warn('A radio with the name "%s" already exists.', newName)
+                    self.log.warning('A radio with the name "%s" already exists.', newName)
                     radioAdded = False
                 else:
                     result.set("name", str(newName))
@@ -195,7 +196,7 @@ class XmlDataProvider:
             if oldName != newNameStr:
                 groupEx = self._groupExists(newNameStr)
                 if groupEx is not None:
-                    self.log.warn('A group with the name "%s" already exists.', newName)
+                    self.log.warning('A group with the name "%s" already exists.', newName)
                     groupAdded = False
                 else:
                     result.set("name", str(newNameStr))
@@ -331,8 +332,8 @@ class XmlDataProvider:
 
             index = itemTarget.getparent().index(itemTarget)
 
-            if (position == Gtk.TreeViewDropPosition.INTO_OR_BEFORE or
-                position == Gtk.TreeViewDropPosition.INTO_OR_AFTER):
+            if position in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE,
+                Gtk.TreeViewDropPosition.INTO_OR_AFTER):
 
                 itemTarget.append(itemToMove)
 
@@ -353,7 +354,7 @@ class XmlDataProvider:
             radio = self.root.xpath("//bookmark[@name=$var]", var=name)[0]
         except IndexError:
             # No radio was found
-            self.log.warn('Could not find a radio with the name "%s".', name)
+            self.log.warning('Could not find a radio with the name "%s".', name)
 
         return radio
 
@@ -364,7 +365,7 @@ class XmlDataProvider:
             group = self.root.xpath("//group[@name=$var]", var=name)[0]
         except IndexError:
             # No group was found
-            self.log.warn('Could not find a group with the name "%s".', name)
+            self.log.warning('Could not find a group with the name "%s".', name)
 
         return group
 
@@ -402,7 +403,7 @@ class XmlDataProvider:
             group.append(element)
             self.saveToFile()
         else:
-            self.log.warn('Could not move element group')
+            self.log.warning('Could not move element group')
 
     def isBookmarkWritable(self):
         return os.access(self.filename, os.W_OK)
