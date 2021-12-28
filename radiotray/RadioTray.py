@@ -112,8 +112,8 @@ class RadioTray:
         self.mediator.init(self.audio)
 
 
-        # start dbus facade
-        _dbus = DbusFacade(self.provider, self.mediator) # just created, never used TODO check it
+        # start dbus facade (can be tested via testdbus script)
+        self._dbus = DbusFacade(self.provider, self.mediator)
 
     #load plugin manager
         self.pluginManager = PluginManager(eventManagerWrapper, eventSubscriber,
