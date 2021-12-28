@@ -41,7 +41,6 @@ from .PluginManager import PluginManager
 from .lib.common import USER_CFG_PATH, CFG_NAME, OLD_USER_CFG_PATH,\
     DEFAULT_RADIO_LIST, OPTIONS_CFG_NAME, DEFAULT_CONFIG_FILE,\
     USER_PLUGIN_PATH, LOGFILE
-from . import mpris
 from .GuiChooserConfiguration import GuiChooserConfiguration
 
 
@@ -115,7 +114,6 @@ class RadioTray:
 
         # start dbus facade
         _dbus = DbusFacade(self.provider, self.mediator) # just created, never used TODO check it
-        #dbus_mpris = mpris.RadioTrayMpris(self.provider, self.mediator)
 
     #load plugin manager
         self.pluginManager = PluginManager(eventManagerWrapper, eventSubscriber,

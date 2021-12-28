@@ -1,6 +1,7 @@
 radiotray (0.8.2) UNRELEASED; urgency=low
   * Integrated debian patches
   * Fix deprectation warnings and code cleanup
+  * Remove MPRIS D-Bus code, it was unused code
 
  -- Matthias <borim7@web.de>  Tue, 28 Dec 2021 16:47:31 +0100
 
