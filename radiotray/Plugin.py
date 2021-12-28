@@ -80,5 +80,9 @@ class Plugin(threading.Thread):
     def hasMenuItem(self):
         return False
 
+    def on_menu(self, _data):
+        """Called when clicked on plugin entry in menu.
+        Default is to do nothing, reimplement if needed."""
+
     def run(self):
         self.activate()
