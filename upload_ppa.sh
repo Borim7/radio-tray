@@ -3,7 +3,7 @@
 set -e
 
 # ppa require ubuntu distribution series in first line of changelog
-UBUNTU_SERIES="focal impish jammy"
+UBUNTU_SERIES="focal jammy kinetic"
 # only if same release need to be updated again
 PPA_VERSION=
 
