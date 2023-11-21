@@ -19,6 +19,14 @@
 ##########################################################################
 import os
 
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import GLib
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
+
 from radiotray.events.EventManager import EventManager
 from radiotray.Plugin import Plugin
 from radiotray.lib import utils
@@ -68,8 +76,10 @@ class HistoryPlugin(Plugin):
             title = data['title']
             if title != self.last_title:
                 self.last_title = title
-                buffer = self.text.get_buffer()
-                buffer.insert(buffer.get_end_iter(),title+'\n')
+                # avoid crash, if fault during activation happend
+                if self.text is not None:
+                    buffer = self.text.get_buffer()
+                    buffer.insert(buffer.get_end_iter(),title+'\n')
 
 
     def on_menu(self, data):
