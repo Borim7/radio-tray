@@ -68,8 +68,10 @@ class HistoryPlugin(Plugin):
             title = data['title']
             if title != self.last_title:
                 self.last_title = title
-                buffer = self.text.get_buffer()
-                buffer.insert(buffer.get_end_iter(),title+'\n')
+                # avoid crash, if fault during activation happend
+                if self.text is not None:
+                    buffer = self.text.get_buffer()
+                    buffer.insert(buffer.get_end_iter(),title+'\n')
 
 
     def on_menu(self, data):
