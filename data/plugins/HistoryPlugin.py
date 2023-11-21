@@ -19,6 +19,14 @@
 ##########################################################################
 import os
 
+try:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import GLib
+except (ImportError, ValueError) as e:
+    print(__file__ + ": " + str(e))
+    sys.exit(1)
+
 from radiotray.events.EventManager import EventManager
 from radiotray.Plugin import Plugin
 from radiotray.lib import utils
