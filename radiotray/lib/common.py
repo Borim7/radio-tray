@@ -9,7 +9,7 @@ from . import i18n # pylint: disable=unused-import
 try:
     from defs import * # pylint: disable=wildcard-import
 except ImportError:
-    APPVERSION = "0.8.2"
+    APPVERSION = "0.8.3"
     if os.uname()[0] == 'OpenBSD':
         datadir = "/usr/local/share"
     else:
