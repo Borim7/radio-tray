@@ -3,7 +3,7 @@
 set -e
 
 # ppa require ubuntu distribution series in first line of changelog
-UBUNTU_SERIES="focal jammy lunar mantic"
+UBUNTU_SERIES="focal jammy mantic noble"
 # only if same release need to be updated again
 PPA_VERSION=
 
@@ -33,7 +33,7 @@ do
 	sed -i "1s/)/-ppa$PPA_VERSION~$SERIES)/" $PACKAGE_DIR/debian/changelog
 
 	# create source package
-	(cd $PACKAGE_DIR && debuild -S)
+	(cd $PACKAGE_DIR && debuild -S -kA8D1CDA648201614357FE21BE2371C186A6AAE2F)
 
 	# upload source package
 	dput ppa:borim/radiotray $BASE_DIR/radiotray*_source.changes
