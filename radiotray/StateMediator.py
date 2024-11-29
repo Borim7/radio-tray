@@ -111,7 +111,9 @@ class StateMediator:
 
     def set_volume(self, value):
         self.log.debug('set volume: %s', str(value))
+        self.updateVolume(value)
         self.audioPlayer.player.set_property("volume", value)
+        self.eventManager.notify(EventManager.VOLUME_CHANGED, {'volume':self.getVolume()})
 
     def getVolume(self):
         return int(round(self.volume * 100))

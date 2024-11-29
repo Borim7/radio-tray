@@ -1,0 +1,6 @@
+[RadioTrayPlugin]
+name=MPRIS
+desc=Control RadioTray through the standardized MPRIS interface
+script=MPRISPlugin.py
+class=MPRISPlugin
+author=Faidon Liambotis
