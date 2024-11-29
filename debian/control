@@ -7,6 +7,7 @@ Build-Depends: debhelper (>= 11~),
  python3-distutils-extra (>= 2.10),
  dh-python,
  python3-dbus,
+ python3-dbus-next,
  python3-xdg
 Maintainer: Carlos Ribeiro <carlosmribeiro1@gmail.com>
 Standards-Version: 3.8.2
