@@ -20,6 +20,7 @@ RadioTray was written in Python and uses gtk and gstreamer libraries (you'll nee
 - python3-gi
 - python3-lxml
 - python3-dbus
+- python3-dbus-next
 - python3-xdg
 - gir1.2-appindicator3-0.1
 
@@ -28,6 +29,9 @@ RadioTray was written in Python and uses gtk and gstreamer libraries (you'll nee
 - python3-distutils-extra
 - dh-python
 - debhelper
+
+## Linting
+You can use `pylint radiotray` to perform static code checks. Expect some findings...
 
 ## Installation
 To install, you can run `python setup.py install`. Note: there is no uninstall script.
