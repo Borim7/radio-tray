@@ -3,7 +3,7 @@
 set -e
 
 # ppa require ubuntu distribution series in first line of changelog
-UBUNTU_SERIES="focal jammy noble oracular"
+UBUNTU_SERIES="jammy noble questing"
 # only if same release need to be updated again
 PPA_VERSION=
 
